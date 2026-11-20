@@ -1,0 +1,58 @@
+{
+  "name": "venira-chemtrade-store",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "seed": "tsx --env-file=.env src/database/seeds/run.ts",
+    "bootstrap:superadmin": "tsx --env-file=.env src/database/seeds/bootstrap-super-admin.ts"
+  },
+  "dependencies": {
+    "@emotion/cache": "11.14.0",
+    "@emotion/react": "11.14.0",
+    "@emotion/styled": "11.14.1",
+    "@hookform/resolvers": "3.10.0",
+    "@mui/icons-material": "6.5.0",
+    "@mui/material": "6.5.0",
+    "@mui/material-nextjs": "6.5.0",
+    "@tanstack/react-query": "5.62.0",
+    "bcryptjs": "2.4.3",
+    "cloudinary": "2.5.1",
+    "framer-motion": "11.18.2",
+    "jose": "5.10.0",
+    "mongoose": "8.9.5",
+    "next": "15.5.9",
+    "razorpay": "2.9.5",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-hook-form": "7.54.2",
+    "recharts": "2.15.4",
+    "zod": "3.24.1",
+    "zustand": "5.0.3"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "3.2.0",
+    "@playwright/test": "1.57.0",
+    "@types/bcryptjs": "2.4.6",
+    "@types/node": "22.10.5",
+    "@types/react": "19.0.6",
+    "@types/react-dom": "19.0.3",
+    "eslint": "9.17.0",
+    "eslint-config-next": "15.5.9",
+    "mongodb-memory-server": "^10.1.4",
+    "prettier": "3.4.2",
+    "tsx": "4.19.2",
+    "typescript": "5.7.3",
+    "vitest": "2.1.8"
+  }
+}

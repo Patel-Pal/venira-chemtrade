@@ -1,0 +1,19 @@
+node_modules
+.next
+out
+build
+coverage
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+playwright-report
+test-results
+.DS_Store
+
+.next-dev
+
+# private supplier/business source files (catalogue PDF)
+source/
