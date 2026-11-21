@@ -30,6 +30,7 @@ import { ProductGrid } from './ProductCard';
 import { EmptyState, ErrorNote, ProductGridSkeleton } from '@/components/common/ui';
 import { DEFAULT_FILTERS, useFilterStore, type SortKey } from '@/stores/filter.store';
 import { useUiStore } from '@/stores/ui.store';
+import { brand, shadows } from '@/theme/tokens';
 
 const SORTS: { value: SortKey; label: string }[] = [
   { value: 'newest', label: 'Newest' },
@@ -63,12 +64,12 @@ function FilterPanel({ onApply }: { onApply?: () => void }) {
     <Box component="section" aria-label="Filters">
       <FilterGroup title="Category">
         <List dense disablePadding>
-          <ListItemButton selected={!f.category} onClick={() => { f.set({ category: '' }); onApply?.(); }} sx={{ borderRadius: 2, minHeight: 40 }}>
+          <ListItemButton selected={!f.category} onClick={() => { f.set({ category: '' }); onApply?.(); }} sx={{ borderRadius: 2, minHeight: 40, '&.Mui-selected': { bgcolor: brand.skyLight, color: brand.navy, fontWeight: 700 } }}>
             <ListItemText primary="All categories" />
           </ListItemButton>
           {roots.map((c) => (
             <Box key={c.id}>
-              <ListItemButton selected={f.category === c.slug} onClick={() => { f.set({ category: c.slug }); onApply?.(); }} sx={{ borderRadius: 2, minHeight: 40 }}>
+              <ListItemButton selected={f.category === c.slug} onClick={() => { f.set({ category: c.slug }); onApply?.(); }} sx={{ borderRadius: 2, minHeight: 40, '&.Mui-selected': { bgcolor: brand.skyLight, color: brand.navy } }}>
                 <ListItemText primary={c.name} secondary={`${c.productCount} items`} slotProps={{ secondary: { fontSize: '0.72rem' } }} />
               </ListItemButton>
               {cats.filter((s) => s.parentId === c.id).map((s) => (
@@ -162,15 +163,15 @@ export default function ProductListing({ title = 'All ingredients' }: { title?: 
 
   return (
     <Box sx={{ display: 'grid', gap: { md: 4 }, gridTemplateColumns: { xs: '1fr', md: '260px 1fr' }, alignItems: 'start' }}>
-      <Box sx={{ display: { xs: 'none', md: 'block' }, position: 'sticky', top: 100, bgcolor: '#fff', border: '1px solid', borderColor: 'divider', borderRadius: 5, p: 2.5 }}>
+      <Box sx={{ display: { xs: 'none', md: 'block' }, position: 'sticky', top: 100, bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 5, p: 2.5, boxShadow: shadows.soft, maxHeight: 'calc(100vh - 120px)', overflowY: 'auto' }}>
         <FilterPanel />
       </Box>
 
       <Box sx={{ minWidth: 0 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, mb: 2, flexWrap: 'wrap' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, mb: 2.5, flexWrap: 'wrap', p: { xs: 2, md: 3 }, borderRadius: 5, border: `1px solid ${brand.line}`, background: `radial-gradient(500px 200px at 100% 0%, ${brand.skyLight}, transparent 70%), radial-gradient(400px 200px at 0% 100%, ${brand.greenLight}, transparent 70%), #fff`, boxShadow: shadows.soft }}>
           <Box>
-            <Typography variant="h2" component="h1" sx={{ fontSize: { xs: '1.6rem', md: '2.2rem' } }}>{activeCategory?.name ?? (f.q ? `Results for "${f.q}"` : title)}</Typography>
-            <Typography variant="body2" color="text.secondary" aria-live="polite">{data ? `${data.total} ${data.total === 1 ? 'item' : 'items'}` : 'Loading…'}</Typography>
+            <Typography variant="h2" component="h1" sx={{ fontSize: { xs: '1.6rem', md: '2.2rem' }, color: 'primary.dark' }}>{activeCategory?.name ?? (f.q ? `Results for "${f.q}"` : title)}</Typography>
+            <Chip size="small" label={data ? `${data.total} ${data.total === 1 ? 'item' : 'items'}` : 'Loading…'} aria-live="polite" sx={{ mt: 0.75, bgcolor: '#fff', border: `1px solid ${brand.line}`, color: 'text.secondary' }} />
           </Box>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
             <Badge badgeContent={activeCount} color="primary">

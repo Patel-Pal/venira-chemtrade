@@ -28,6 +28,7 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
 import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
@@ -51,7 +52,7 @@ import { ADMIN_LINKS, SUPER_LINKS, type NavLink } from '@/constants/admin-nav';
 
 const W = 264;
 const ICONS: Record<string, React.ReactNode> = {
-  '/admin': <DashboardOutlinedIcon />, '/admin/products': <Inventory2OutlinedIcon />, '/admin/categories': <CategoryOutlinedIcon />,
+  '/admin': <DashboardOutlinedIcon />, '/admin/products': <Inventory2OutlinedIcon />, '/admin/pricing': <SellOutlinedIcon />, '/admin/categories': <CategoryOutlinedIcon />,
   '/admin/inventory': <WarehouseOutlinedIcon />, '/admin/orders': <ReceiptLongOutlinedIcon />, '/admin/customers': <PeopleOutlineIcon />,
   '/admin/coupons': <LocalOfferOutlinedIcon />, '/admin/reviews': <StarBorderIcon />, '/admin/banners': <ViewCarouselOutlinedIcon />,
   '/admin/payments': <PaymentsOutlinedIcon />, '/admin/reports': <BarChartIcon />, '/admin/settings': <SettingsOutlinedIcon />,
@@ -108,7 +109,7 @@ export default function AdminShell({ variant, children, permissions, isSuperAdmi
   };
 
   const sidebar = (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#fff', color: brand.ink, borderRight: `1px solid ${brand.line}` }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', background: `linear-gradient(180deg, #fff, ${brand.canvas})`, color: brand.ink, borderRight: `1px solid ${brand.line}`, boxShadow: '4px 0 24px rgba(16,36,63,.04)' }}>
       <Box sx={{ px: 2.5, py: 2, m: 1.5, mb: 0.5 }}><LogoLink /></Box>
       <Chip size="small" label={variant === 'admin' ? 'Admin panel' : 'Super Admin'} sx={{ alignSelf: 'flex-start', ml: 2.5, mb: 1, bgcolor: variant === 'admin' ? brand.skyLight : brand.greenLight, color: variant === 'admin' ? brand.navy : brand.greenDark, fontWeight: 800 }} />
       <List component="nav" aria-label="Admin navigation" sx={{ flex: 1, overflowY: 'auto', px: 1.5 }}>
@@ -116,7 +117,7 @@ export default function AdminShell({ variant, children, permissions, isSuperAdmi
           const active = n.href === home ? pathname === home : pathname.startsWith(n.href);
           return (
             <ListItemButton key={n.href} component={Link} href={n.href} onClick={() => setOpen(false)} selected={active} aria-current={active ? 'page' : undefined}
-              sx={{ borderRadius: 2.5, mb: 0.5, minHeight: 46, color: brand.muted, '&.Mui-selected': { bgcolor: brand.skyLight, color: brand.navy, '&:hover': { bgcolor: brand.skyLight } }, '&:hover': { bgcolor: brand.canvas } }}>
+              sx={{ position: 'relative', borderRadius: 2.5, mb: 0.5, minHeight: 46, color: brand.muted, transition: 'all .2s', '&.Mui-selected': { bgcolor: brand.skyLight, color: brand.navy, boxShadow: '0 2px 8px rgba(43,82,144,.12)', '&::before': { content: '""', position: 'absolute', left: -6, top: 10, bottom: 10, width: 4, borderRadius: 2, background: `linear-gradient(180deg, ${brand.navy}, ${brand.sky})` }, '&:hover': { bgcolor: brand.skyLight } }, '&:hover': { bgcolor: '#fff', color: brand.navy, transform: 'translateX(2px)' } }}>
               <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}>{n.icon}</ListItemIcon>
               <ListItemText primary={n.label} slotProps={{ primary: { fontWeight: active ? 700 : 500, fontSize: '0.92rem' } }} />
             </ListItemButton>
@@ -144,7 +145,7 @@ export default function AdminShell({ variant, children, permissions, isSuperAdmi
       <Drawer open={open} onClose={() => setOpen(false)} sx={{ display: { lg: 'none' } }} slotProps={{ paper: { sx: { width: W, maxWidth: '86vw' } } }}>{sidebar}</Drawer>
 
       <Box sx={{ flex: 1, minWidth: 0, ml: { lg: `${W}px` } }}>
-        <AppBar position="sticky" color="inherit" elevation={0} sx={{ bgcolor: 'rgba(255,255,255,.92)', backdropFilter: 'blur(10px)', borderBottom: `1px solid ${brand.line}` }}>
+        <AppBar position="sticky" color="inherit" elevation={0} sx={{ bgcolor: 'rgba(255,255,255,.9)', backdropFilter: 'saturate(180%) blur(14px)', borderBottom: `1px solid ${brand.line}`, boxShadow: '0 4px 20px rgba(16,36,63,.04)' }}>
           <Toolbar sx={{ gap: 1, minHeight: 64 }}>
             <IconButton aria-label="Open navigation" onClick={() => setOpen(true)} sx={{ display: { lg: 'none' } }}><MenuIcon /></IconButton>
             <Breadcrumbs aria-label="Breadcrumb" sx={{ display: { xs: 'none', sm: 'block' }, fontSize: '0.85rem', textTransform: 'capitalize', minWidth: 0 }}>
@@ -161,7 +162,7 @@ export default function AdminShell({ variant, children, permissions, isSuperAdmi
               </Box>
             )}
             <Bell />
-            <IconButton aria-label="Profile menu" onClick={(e) => setMenu(e.currentTarget)}><Avatar sx={{ width: 34, height: 34, bgcolor: brand.navy, fontSize: '0.9rem' }}>{user?.name?.[0]?.toUpperCase() ?? '?'}</Avatar></IconButton>
+            <IconButton aria-label="Profile menu" onClick={(e) => setMenu(e.currentTarget)}><Avatar sx={{ width: 36, height: 36, background: `linear-gradient(135deg, ${brand.navy}, ${brand.sky})`, fontSize: '0.9rem', fontWeight: 700 }}>{user?.name?.[0]?.toUpperCase() ?? '?'}</Avatar></IconButton>
             <Menu anchorEl={menu} open={Boolean(menu)} onClose={() => setMenu(null)} slotProps={{ paper: { sx: { borderRadius: 3, minWidth: 220, mt: 1 } } }}>
               <Box sx={{ px: 2, py: 1 }}><Typography sx={{ fontWeight: 700 }} noWrap>{user?.name}</Typography><Typography variant="caption" color="text.secondary" noWrap>{user?.email}</Typography><br /><Chip size="small" label={user?.roleKey?.replace(/_/g, ' ')} sx={{ mt: 0.5, textTransform: 'capitalize' }} /></Box>
               <Divider />

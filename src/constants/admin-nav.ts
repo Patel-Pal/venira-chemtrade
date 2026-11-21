@@ -8,6 +8,7 @@ export interface NavLink {
 export const ADMIN_LINKS: NavLink[] = [
   { href: '/admin', label: 'Dashboard', perm: 'reports.read' },
   { href: '/admin/products', label: 'Products', perm: 'products.read' },
+  { href: '/admin/pricing', label: 'Pricing', perm: 'products.update' },
   { href: '/admin/categories', label: 'Categories', perm: 'categories.read' },
   { href: '/admin/inventory', label: 'Inventory', perm: 'inventory.read' },
   { href: '/admin/orders', label: 'Orders', perm: 'orders.read' },

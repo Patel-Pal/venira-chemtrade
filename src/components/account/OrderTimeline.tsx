@@ -31,8 +31,8 @@ export default function OrderTimeline({ status, history }: { status: OrderStatus
         const bad = s === 'cancelled' || s === 'returned';
         return (
           <Box component="li" key={s} aria-current={i === currentIdx ? 'step' : undefined} sx={{ display: 'grid', gridTemplateColumns: '28px 1fr', gap: 1.5, position: 'relative', pb: i === steps.length - 1 ? 0 : 2.5 }}>
-            {i < steps.length - 1 && <Box aria-hidden sx={{ position: 'absolute', left: 13, top: 26, bottom: 0, width: 2, bgcolor: done && !terminalProblem && i < currentIdx ? brand.sky : brand.line }} />}
-            <Box sx={{ color: bad ? 'error.main' : done ? brand.navy : '#B8C4D6', display: 'grid', placeItems: 'start center' }}>
+            {i < steps.length - 1 && <Box aria-hidden sx={{ position: 'absolute', left: 13, top: 26, bottom: 0, width: 3, borderRadius: 2, background: done && !terminalProblem && i < currentIdx ? `linear-gradient(180deg, ${brand.green}, ${brand.sky})` : brand.line }} />}
+            <Box sx={{ color: bad ? 'error.main' : done ? (i === currentIdx ? brand.navy : brand.greenDark) : '#B8C4D6', display: 'grid', placeItems: 'start center', ...(i === currentIdx && !bad ? { '& svg': { filter: `drop-shadow(0 0 6px ${brand.sky})` } } : {}) }}>
               {bad ? <CancelIcon /> : done ? <CheckCircleIcon /> : <RadioButtonUncheckedIcon />}
             </Box>
             <Box>

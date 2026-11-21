@@ -3,6 +3,7 @@ import StoreHeader from '@/components/navigation/StoreHeader';
 import BottomNav from '@/components/navigation/BottomNav';
 import Footer from '@/components/navigation/Footer';
 import QuickView from '@/components/products/QuickView';
+import WhatsAppButton from '@/components/common/WhatsAppButton';
 import MaintenanceView from '@/components/common/MaintenanceView';
 import { getPublicSettings } from '@/modules/settings/public-settings';
 import { getAuth } from '@/lib/auth';
@@ -26,6 +27,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
       </Box>
       <Footer settings={settings} />
       <BottomNav />
+      <WhatsAppButton phone={settings.whatsapp || settings.contactPhone} storeName={settings.storeName} />
       <QuickView />
     </>
   );

@@ -21,7 +21,7 @@ import OrderSummary from './OrderSummary';
 import type { CartLineDTO } from '@/modules/orders/cart.service';
 import { optimizedImage } from '@/utils/image';
 import { formatPaise } from '@/utils/money';
-import { brand } from '@/theme/tokens';
+import { brand, shadows } from '@/theme/tokens';
 
 const ISSUE_TEXT: Record<string, string> = {
   unavailable: 'No longer available',
@@ -34,8 +34,8 @@ function Line({ line }: { line: CartLineDTO }) {
   const { setQuantity, remove } = useCartStore();
   const unpurchasable = line.issue === 'unavailable' || line.issue === 'out_of_stock' || line.issue === 'price_on_request';
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: '84px 1fr', gap: 2, p: 2, bgcolor: '#fff', border: `1px solid ${line.issue ? '#f3b8b8' : brand.line}`, borderRadius: 4 }}>
-      <Box component={Link} href={`/products/${line.slug}`} sx={{ position: 'relative', width: 84, height: 84, borderRadius: 3, overflow: 'hidden', bgcolor: brand.canvas, display: 'grid', placeItems: 'center' }}>
+    <Box sx={{ display: 'grid', gridTemplateColumns: '84px 1fr', gap: 2, p: 2, bgcolor: '#fff', border: `1px solid ${line.issue ? '#f3b8b8' : brand.line}`, borderRadius: 5, boxShadow: shadows.soft, transition: 'box-shadow .25s, border-color .25s', '&:hover': { boxShadow: shadows.lift, borderColor: line.issue ? '#f3b8b8' : `${brand.sky}88` } }}>
+      <Box component={Link} href={`/products/${line.slug}`} sx={{ position: 'relative', width: 84, height: 84, borderRadius: 3, overflow: 'hidden', bgcolor: brand.canvas, border: `1px solid ${brand.line}`, display: 'grid', placeItems: 'center' }}>
         {line.imageUrl ? <Image src={optimizedImage(line.imageUrl, 200) ?? line.imageUrl} alt={line.name} fill sizes="84px" style={{ objectFit: 'cover' }} /> : <Image src="/images/logo-mark.png" alt="" width={42} height={38} style={{ opacity: 0.4, height: 'auto' }} />}
       </Box>
       <Box sx={{ minWidth: 0 }}>
@@ -44,14 +44,14 @@ function Line({ line }: { line: CartLineDTO }) {
             <Typography component={Link} href={`/products/${line.slug}`} sx={{ fontWeight: 700, textDecoration: 'none', display: 'block', lineHeight: 1.3 }}>{line.name}</Typography>
             <Typography variant="caption" color="text.secondary">{line.variantLabel} · {line.sku}</Typography>
           </Box>
-          <IconButton aria-label={`Remove ${line.name}`} onClick={() => remove(line.variantId)} sx={{ alignSelf: 'flex-start' }}><DeleteOutlineIcon /></IconButton>
+          <IconButton aria-label={`Remove ${line.name}`} onClick={() => remove(line.variantId)} sx={{ alignSelf: 'flex-start', color: 'text.secondary', '&:hover': { color: 'error.main', bgcolor: '#FDE8E8' } }}><DeleteOutlineIcon /></IconButton>
         </Box>
         {line.issue && <Chip size="small" color="error" variant="outlined" label={ISSUE_TEXT[line.issue]} sx={{ mt: 0.75, height: 'auto', '& .MuiChip-label': { whiteSpace: 'normal', py: 0.4 } }} />}
         <Box sx={{ mt: 1.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
           {!unpurchasable ? <QuantityStepper size="sm" value={line.quantity} max={line.maxQuantity ?? 10_000} onChange={(n) => setQuantity(line.variantId, n)} /> : <Box />}
           {line.unitPricePaise !== null && (
             <Box sx={{ textAlign: 'right' }}>
-              <Typography sx={{ fontWeight: 800 }}>{formatPaise(line.lineTotalPaise)}</Typography>
+              <Typography sx={{ fontWeight: 800, color: 'primary.dark', fontSize: '1.05rem' }}>{formatPaise(line.lineTotalPaise)}</Typography>
               {line.quantity > 1 && <Typography variant="caption" color="text.secondary">{formatPaise(line.unitPricePaise)} each</Typography>}
             </Box>
           )}
@@ -98,7 +98,7 @@ export default function CartView() {
         {cart.lines.map((l) => <Line key={l.variantId} line={l} />)}
       </Box>
       <Box sx={{ position: { md: 'sticky' }, top: { md: 100 }, display: 'grid', gap: 2 }}>
-        <Box sx={{ bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 5, p: 2.5 }}>
+        <Box sx={{ bgcolor: '#fff', border: `1px dashed ${brand.sky}`, borderRadius: 5, p: 2.5, background: `linear-gradient(135deg, ${brand.skyLight}66, #fff 70%)` }}>
           <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, color: 'text.primary' }}>Have a coupon?</Typography>
           <CouponBox />
           {cart.couponError && <Alert severity="warning" sx={{ mt: 1.5 }}>{cart.couponError}</Alert>}

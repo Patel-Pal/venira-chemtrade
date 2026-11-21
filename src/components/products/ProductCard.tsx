@@ -44,13 +44,13 @@ export default function ProductCard({ product, priority = false }: { product: Pr
       transition={{ type: 'spring', stiffness: 320, damping: 26 }}
       style={{ position: 'relative', height: '100%' }}
     >
-      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#fff', borderRadius: 5, border: `1px solid ${brand.line}`, overflow: 'hidden', boxShadow: shadows.soft, transition: 'box-shadow .25s', '&:hover': { boxShadow: shadows.lift }, '&:hover .qv': { opacity: 1 } }}>
-        <Box sx={{ position: 'relative', aspectRatio: '1 / 1', bgcolor: brand.canvas }}>
+      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#fff', borderRadius: 5, border: `1px solid ${brand.line}`, overflow: 'hidden', boxShadow: shadows.soft, transition: 'box-shadow .25s, border-color .25s', '&:hover': { boxShadow: shadows.lift, borderColor: `${brand.sky}88` }, '&:hover .qv': { opacity: 1 }, '& .pimg img': { transition: 'transform .5s ease' }, '&:hover .pimg img': { transform: 'scale(1.06)' } }}>
+        <Box className="pimg" sx={{ position: 'relative', aspectRatio: '1 / 1', bgcolor: brand.canvas, overflow: 'hidden', borderBottom: `1px solid ${brand.line}` }}>
           <Link href={`/products/${product.slug}`} aria-label={product.name} style={{ position: 'absolute', inset: 0, zIndex: 1 }} />
           <ProductImage src={product.image?.url} alt={product.image?.alt ?? product.name} priority={priority} sizes="(max-width:600px) 50vw, (max-width:1200px) 33vw, 25vw" />
           <Box sx={{ position: 'absolute', top: 10, left: 10, zIndex: 2, display: 'flex', gap: 0.5, flexWrap: 'wrap', pointerEvents: 'none' }}>
             {product.badges.slice(0, 2).map((b) => (
-              <Chip key={b} label={b} size="small" sx={{ bgcolor: b === 'Offer' ? brand.green : brand.navy, color: '#fff', height: 24, fontSize: '0.7rem' }} />
+              <Chip key={b} label={b} size="small" sx={{ background: b === 'Offer' ? `linear-gradient(135deg, ${brand.green}, ${brand.greenDark})` : `linear-gradient(135deg, ${brand.navy}, ${brand.navyDark})`, color: '#fff', height: 24, fontSize: '0.7rem', boxShadow: '0 2px 6px rgba(16,36,63,.2)' }} />
             ))}
           </Box>
           <IconButton

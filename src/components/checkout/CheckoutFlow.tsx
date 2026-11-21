@@ -16,6 +16,7 @@ import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import Alert from '@mui/material/Alert';
 import Skeleton from '@mui/material/Skeleton';
+import Chip from '@mui/material/Chip';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useAddresses } from '@/hooks/useAccount';
 import { useCartPricing } from '@/hooks/useCart';
@@ -30,18 +31,23 @@ import { ApiError, patch, post } from '@/lib/api-client';
 import { qk } from '@/lib/query-keys';
 import { openRazorpay } from '@/lib/razorpay-client';
 import { formatPaise } from '@/utils/money';
-import { brand } from '@/theme/tokens';
+import { brand, shadows } from '@/theme/tokens';
 import type { Address } from '@/types/domain';
 
 const STEPS = ['Customer', 'Delivery', 'Shipping', 'Review', 'Payment'];
 interface CheckoutResult { orderId: string; orderNumber: string; razorpayOrderId: string; amountPaise: number; currency: string; keyId: string; customer: { name: string; email: string; phone?: string } }
 
 const Card = ({ children, title }: { children: React.ReactNode; title: string }) => (
-  <Box sx={{ bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 5, p: { xs: 2, md: 3 }, display: 'grid', gap: 2 }}>
-    <Typography variant="h5" component="h2">{title}</Typography>
+  <Box sx={{ bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 5, p: { xs: 2, md: 3 }, display: 'grid', gap: 2, boxShadow: shadows.soft }}>
+    <Typography variant="h5" component="h2" sx={{ color: 'primary.dark', display: 'flex', alignItems: 'center', gap: 1.25 }}>
+      <Box component="span" aria-hidden sx={{ width: 5, height: 22, borderRadius: 3, background: `linear-gradient(180deg, ${brand.sky}, ${brand.green})` }} />
+      {title}
+    </Typography>
     {children}
   </Box>
 );
+
+const optionSx = { m: 0, mb: 1, p: 1.5, borderRadius: 3, alignItems: 'flex-start', transition: 'all .2s', '&:hover': { borderColor: brand.sky } } as const;
 
 export default function CheckoutFlow() {
   const router = useRouter();
@@ -134,7 +140,7 @@ export default function CheckoutFlow() {
 
   return (
     <Box>
-      <Stepper activeStep={step} alternativeLabel sx={{ mb: { xs: 3, md: 4 }, '& .MuiStepLabel-label': { fontSize: { xs: '0.7rem', md: '0.85rem' } } }}>
+      <Stepper activeStep={step} alternativeLabel sx={{ mb: { xs: 3, md: 4 }, p: { xs: 1.5, md: 2.5 }, bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 5, boxShadow: shadows.soft, '& .MuiStepLabel-label': { fontSize: { xs: '0.7rem', md: '0.85rem' }, fontWeight: 600 }, '& .MuiStepLabel-label.Mui-active': { color: brand.navy, fontWeight: 800 }, '& .MuiStepIcon-root': { fontSize: { xs: '1.5rem', md: '1.9rem' } }, '& .MuiStepIcon-root.Mui-active': { color: brand.navy, filter: `drop-shadow(0 0 6px ${brand.sky}99)` }, '& .MuiStepIcon-root.Mui-completed': { color: brand.green }, '& .MuiStepConnector-line': { borderTopWidth: 3, borderRadius: 2, borderColor: brand.line }, '& .Mui-active .MuiStepConnector-line, & .Mui-completed .MuiStepConnector-line': { borderColor: brand.green } }}>
         {STEPS.map((s) => <Step key={s}><StepLabel>{s}</StepLabel></Step>)}
       </Stepper>
 
@@ -178,7 +184,7 @@ export default function CheckoutFlow() {
             <Card title="Shipping method">
               <RadioGroup value={effectiveShip ?? ''} onChange={(e) => setShipId(e.target.value)} aria-label="Shipping method">
                 {cart.shippingMethods.map((m) => (
-                  <FormControlLabel key={m.id} value={m.id} control={<Radio />} sx={{ m: 0, mb: 1, p: 1.5, border: `1px solid ${m.id === effectiveShip ? brand.navy : brand.line}`, borderRadius: 3, alignItems: 'flex-start' }}
+                  <FormControlLabel key={m.id} value={m.id} control={<Radio />} sx={{ ...optionSx, border: `1.5px solid ${m.id === effectiveShip ? brand.navy : brand.line}`, bgcolor: m.id === effectiveShip ? brand.skyLight : '#fff' }}
                     label={<Box><Typography sx={{ fontWeight: 700 }}>{m.name} · {m.pricePaise === 0 ? 'Free' : formatPaise(m.pricePaise)}</Typography>{m.description && <Typography variant="body2" color="text.secondary">{m.description}</Typography>}{m.estimatedDays && <Typography variant="caption" color="text.secondary">Delivery in {m.estimatedDays} days</Typography>}{m.freeAbovePaise ? <Typography variant="caption" display="block" color="success.dark">Free above {formatPaise(m.freeAbovePaise)}</Typography> : null}</Box>} />
                 ))}
               </RadioGroup>
@@ -204,7 +210,10 @@ export default function CheckoutFlow() {
 
           {step === 4 && (
             <Card title="Payment">
-              <Alert icon={<LockOutlinedIcon />} severity="info">You&apos;ll pay securely with Razorpay (UPI, cards, net banking, wallets). We never see or store your card details.</Alert>
+              <Alert icon={<LockOutlinedIcon />} severity="info" sx={{ borderRadius: 3 }}>You&apos;ll pay securely with Razorpay (UPI, cards, net banking, wallets). We never see or store your card details.</Alert>
+              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                {['UPI', 'Cards', 'Net banking', 'Wallets'].map((m) => <Chip key={m} size="small" label={m} variant="outlined" sx={{ bgcolor: brand.greenLight, borderColor: `${brand.green}88`, color: brand.greenDark }} />)}
+              </Box>
               {cart.hasIssues && <Alert severity="error">Some items are no longer available. <Link href="/cart">Review your cart</Link>.</Alert>}
               <Button variant="contained" size="large" onClick={pay} disabled={busy || cart.hasIssues || !shippingAddress} startIcon={<LockOutlinedIcon />}>
                 {busy ? 'Starting secure payment…' : `Pay ${formatPaise(clearTotals)}`}
@@ -228,7 +237,7 @@ export default function CheckoutFlow() {
 
 function AddressOption({ a }: { a: Address }) {
   return (
-    <FormControlLabel value={a.id} control={<Radio />} sx={{ m: 0, mb: 1, p: 1.5, border: `1px solid ${brand.line}`, borderRadius: 3, alignItems: 'flex-start' }}
+    <FormControlLabel value={a.id} control={<Radio />} sx={{ ...optionSx, border: `1.5px solid ${brand.line}`, '&:has(.Mui-checked)': { borderColor: brand.navy, bgcolor: brand.skyLight } }}
       label={<Box><Typography sx={{ fontWeight: 700 }}>{a.fullName}{a.label ? ` · ${a.label}` : ''}</Typography><Typography variant="body2" color="text.secondary">{a.line1}{a.line2 ? `, ${a.line2}` : ''}, {a.city}, {a.state} {a.postalCode}</Typography><Typography variant="caption" color="text.secondary">{a.phone}</Typography></Box>} />
   );
 }

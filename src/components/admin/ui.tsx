@@ -23,8 +23,9 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
   return (
     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2, mb: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
       <Box>
-        <Typography variant="h3" component="h1" sx={{ fontSize: { xs: '1.6rem', md: '2rem' } }}>{title}</Typography>
-        {subtitle && <Typography color="text.secondary" variant="body2" sx={{ mt: 0.5 }}>{subtitle}</Typography>}
+        <Typography variant="h3" component="h1" sx={{ fontSize: { xs: '1.6rem', md: '2rem' }, color: 'primary.dark' }}>{title}</Typography>
+        <Box aria-hidden sx={{ width: 44, height: 3, borderRadius: 2, mt: 0.75, background: `linear-gradient(90deg, ${brand.sky}, ${brand.green})` }} />
+        {subtitle && <Typography color="text.secondary" variant="body2" sx={{ mt: 0.75 }}>{subtitle}</Typography>}
       </Box>
       {actions && <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>{actions}</Box>}
     </Box>
@@ -36,7 +37,7 @@ export function Panel({ title, children, action, sx }: { title?: string; childre
     <Box sx={{ bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 4, boxShadow: shadows.soft, p: { xs: 2, md: 3 }, ...sx }}>
       {(title || action) && (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
-          {title && <Typography variant="h6" component="h2">{title}</Typography>}
+          {title && <Typography variant="h6" component="h2" sx={{ color: 'primary.dark', display: 'flex', alignItems: 'center', gap: 1 }}><Box component="span" aria-hidden sx={{ width: 4, height: 18, borderRadius: 2, background: `linear-gradient(180deg, ${brand.sky}, ${brand.green})` }} />{title}</Typography>}
           {action}
         </Box>
       )}
@@ -82,7 +83,7 @@ export function DataTable<T>({ columns, rows, getId, loading, onRowClick, page, 
             {loading ? Array.from({ length: 6 }).map((_, i) => <TableRow key={i}>{columns.map((c) => <TableCell key={c.key}><Skeleton /></TableCell>)}</TableRow>) : rows.length === 0 ? (
               <TableRow><TableCell colSpan={columns.length} sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>{empty}</TableCell></TableRow>
             ) : rows.map((r) => (
-              <TableRow key={getId(r)} hover={Boolean(onRowClick)} onClick={onRowClick ? () => onRowClick(r) : undefined} sx={{ cursor: onRowClick ? 'pointer' : 'default', '&:last-child td': { borderBottom: 0 } }}>
+              <TableRow key={getId(r)} hover={Boolean(onRowClick)} onClick={onRowClick ? () => onRowClick(r) : undefined} sx={{ cursor: onRowClick ? 'pointer' : 'default', transition: 'background .15s', '&:hover': onRowClick ? { bgcolor: `${brand.skyLight}88` } : undefined, '&:nth-of-type(even)': { bgcolor: '#FAFCFE' }, '&:last-child td': { borderBottom: 0 } }}>
                 {columns.map((c) => <TableCell key={c.key} align={c.align}>{cell(c, r)}</TableCell>)}
               </TableRow>
             ))}

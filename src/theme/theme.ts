@@ -50,7 +50,9 @@ const base: ThemeOptions = {
         root: { borderRadius: radius.sm + 2, minHeight: 44, paddingInline: 22 },
         sizeLarge: { minHeight: 52, fontSize: '1rem', paddingInline: 30 },
         sizeSmall: { minHeight: 36 },
-        containedPrimary: { '&:hover': { background: brand.navyDark } },
+        contained: { transition: 'transform .2s, box-shadow .2s, background .2s' },
+        containedPrimary: { background: `linear-gradient(135deg, ${brand.navy}, ${brand.navyDark})`, boxShadow: '0 4px 14px rgba(43,82,144,.28)', '&:hover': { background: `linear-gradient(135deg, ${brand.navyDark}, ${brand.navyDeep})`, transform: 'translateY(-1px)', boxShadow: '0 8px 20px rgba(43,82,144,.35)' }, '&:active': { transform: 'none' } },
+        outlinedPrimary: { borderWidth: 1.5, '&:hover': { borderWidth: 1.5, background: brand.skyLight } },
       },
       variants: [
         { props: { variant: 'soft' as never }, style: { background: brand.skyLight, color: brand.navy, '&:hover': { background: '#d3ebf5' } } },
@@ -62,7 +64,7 @@ const base: ThemeOptions = {
     MuiTextField: { defaultProps: { variant: 'outlined', size: 'medium', fullWidth: true } },
     MuiOutlinedInput: {
       styleOverrides: {
-        root: { borderRadius: radius.sm + 2, background: '#fff', '& fieldset': { borderColor: '#D3DCE8' }, '&:hover fieldset': { borderColor: brand.sky } },
+        root: { borderRadius: radius.sm + 2, background: '#fff', '& fieldset': { borderColor: '#D3DCE8' }, '&:hover fieldset': { borderColor: brand.sky }, '&.Mui-focused': { boxShadow: `0 0 0 4px ${brand.sky}33` } },
         input: { paddingBlock: 14 },
       },
     },
