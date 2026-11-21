@@ -12,6 +12,10 @@ import Pagination from '@mui/material/Pagination';
 import Chip from '@mui/material/Chip';
 import Badge from '@mui/material/Badge';
 import Divider from '@mui/material/Divider';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Rating from '@mui/material/Rating';
@@ -36,6 +40,17 @@ const SORTS: { value: SortKey; label: string }[] = [
 ];
 const PAGE_SIZE = 12;
 
+function FilterGroup({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
+  return (
+    <Accordion defaultExpanded={defaultOpen} disableGutters elevation={0} square sx={{ bgcolor: 'transparent', '&::before': { display: 'none' }, borderBottom: '1px solid', borderColor: 'divider' }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ px: 0, minHeight: 48 }}>
+        <Typography sx={{ fontWeight: 700 }}>{title}</Typography>
+      </AccordionSummary>
+      <AccordionDetails sx={{ px: 0, pt: 0, pb: 2 }}>{children}</AccordionDetails>
+    </Accordion>
+  );
+}
+
 function FilterPanel({ onApply }: { onApply?: () => void }) {
   const f = useFilterStore();
   const { data: cats = [] } = useCategories();
@@ -45,9 +60,8 @@ function FilterPanel({ onApply }: { onApply?: () => void }) {
   useEffect(() => { setMin(f.minPrice); setMax(f.maxPrice); }, [f.minPrice, f.maxPrice]);
 
   return (
-    <Box component="section" aria-label="Filters" sx={{ display: 'grid', gap: 2.5 }}>
-      <Box>
-        <Typography variant="overline" color="text.secondary">Category</Typography>
+    <Box component="section" aria-label="Filters">
+      <FilterGroup title="Category">
         <List dense disablePadding>
           <ListItemButton selected={!f.category} onClick={() => { f.set({ category: '' }); onApply?.(); }} sx={{ borderRadius: 2, minHeight: 40 }}>
             <ListItemText primary="All categories" />
@@ -65,31 +79,27 @@ function FilterPanel({ onApply }: { onApply?: () => void }) {
             </Box>
           ))}
         </List>
-      </Box>
-      <Divider />
-      <Box>
-        <Typography variant="overline" color="text.secondary">Price (₹)</Typography>
-        <Box sx={{ display: 'flex', gap: 1, mt: 1, alignItems: 'center' }}>
+      </FilterGroup>
+      <FilterGroup title="Price (₹)">
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           <TextField size="small" type="number" label="Min" value={min} onChange={(e) => setMin(e.target.value)} onBlur={() => f.set({ minPrice: min })} slotProps={{ htmlInput: { min: 0, inputMode: 'numeric' } }} />
           <Typography>–</Typography>
           <TextField size="small" type="number" label="Max" value={max} onChange={(e) => setMax(e.target.value)} onBlur={() => f.set({ maxPrice: max })} slotProps={{ htmlInput: { min: 0, inputMode: 'numeric' } }} />
         </Box>
-      </Box>
-      <Divider />
-      <FormControlLabel control={<Switch checked={f.inStock} onChange={(e) => f.set({ inStock: e.target.checked })} />} label="In stock / available only" />
-      <Divider />
-      <Box>
-        <Typography variant="overline" color="text.secondary">Minimum rating</Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+      </FilterGroup>
+      <FilterGroup title="Availability">
+        <FormControlLabel control={<Switch checked={f.inStock} onChange={(e) => f.set({ inStock: e.target.checked })} />} label="In stock / available only" />
+      </FilterGroup>
+      <FilterGroup title="Minimum rating">
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Rating value={f.minRating} onChange={(_, v) => f.set({ minRating: v ?? 0 })} />
           {f.minRating > 0 && <Button size="small" onClick={() => f.set({ minRating: 0 })}>Clear</Button>}
         </Box>
-      </Box>
-      <Button variant="outlined" onClick={() => { f.reset(); onApply?.(); }}>Reset filters</Button>
+      </FilterGroup>
+      <Button variant="outlined" fullWidth onClick={() => { f.reset(); onApply?.(); }} sx={{ mt: 2 }}>Reset filters</Button>
     </Box>
   );
 }
-
 export default function ProductListing({ title = 'All ingredients' }: { title?: string }) {
   const router = useRouter();
   const pathname = usePathname();

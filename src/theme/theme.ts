@@ -8,7 +8,8 @@ const body = 'var(--font-body), system-ui, -apple-system, "Segoe UI", Roboto, sa
 const base: ThemeOptions = {
   breakpoints: { values: { xs: 0, sm: 600, md: 900, lg: 1200, xl: 1536 } },
   spacing: 8,
-  shape: { borderRadius: radius.md },
+  // sx={{ borderRadius: n }} multiplies this base: n=3 -> 12px, 4 -> 16px, 5 -> 20px, 6 -> 24px, 7 -> 28px.
+  shape: { borderRadius: 4 },
   palette: {
     mode: 'light',
     primary: { main: brand.navy, dark: brand.navyDark, light: brand.sky, contrastText: '#fff' },
@@ -37,7 +38,7 @@ const base: ThemeOptions = {
     MuiCssBaseline: {
       styleOverrides: {
         html: { scrollBehavior: 'smooth', WebkitTextSizeAdjust: '100%' },
-        body: { overflowX: 'hidden', WebkitFontSmoothing: 'antialiased' },
+        body: { overflowX: 'hidden', WebkitFontSmoothing: 'antialiased', backgroundImage: 'url(/images/molecules.svg)', backgroundRepeat: 'repeat', backgroundSize: '560px 560px', backgroundAttachment: 'fixed' },
         '@media (prefers-reduced-motion: reduce)': { html: { scrollBehavior: 'auto' }, '*': { animationDuration: '0.01ms !important', transitionDuration: '0.01ms !important' } },
         'a': { color: 'inherit' },
         ':focus-visible': { outline: `3px solid ${brand.sky}`, outlineOffset: 2 },

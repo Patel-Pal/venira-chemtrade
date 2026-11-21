@@ -108,15 +108,15 @@ export default function AdminShell({ variant, children, permissions, isSuperAdmi
   };
 
   const sidebar = (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: brand.navyDeep, color: '#fff' }}>
-      <Box sx={{ p: 2.5, bgcolor: '#fff', m: 1.5, borderRadius: 3 }}><LogoLink /></Box>
-      <Chip size="small" label={variant === 'admin' ? 'Admin panel' : 'Super Admin'} sx={{ alignSelf: 'flex-start', ml: 2.5, mb: 1, bgcolor: variant === 'admin' ? brand.sky : brand.green, color: brand.navyDeep, fontWeight: 800 }} />
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#fff', color: brand.ink, borderRight: `1px solid ${brand.line}` }}>
+      <Box sx={{ px: 2.5, py: 2, m: 1.5, mb: 0.5 }}><LogoLink /></Box>
+      <Chip size="small" label={variant === 'admin' ? 'Admin panel' : 'Super Admin'} sx={{ alignSelf: 'flex-start', ml: 2.5, mb: 1, bgcolor: variant === 'admin' ? brand.skyLight : brand.greenLight, color: variant === 'admin' ? brand.navy : brand.greenDark, fontWeight: 800 }} />
       <List component="nav" aria-label="Admin navigation" sx={{ flex: 1, overflowY: 'auto', px: 1.5 }}>
         {nav.map((n) => {
           const active = n.href === home ? pathname === home : pathname.startsWith(n.href);
           return (
             <ListItemButton key={n.href} component={Link} href={n.href} onClick={() => setOpen(false)} selected={active} aria-current={active ? 'page' : undefined}
-              sx={{ borderRadius: 2.5, mb: 0.5, minHeight: 46, color: 'rgba(255,255,255,.78)', '&.Mui-selected': { bgcolor: 'rgba(93,177,207,.22)', color: '#fff' }, '&:hover': { bgcolor: 'rgba(255,255,255,.08)' } }}>
+              sx={{ borderRadius: 2.5, mb: 0.5, minHeight: 46, color: brand.muted, '&.Mui-selected': { bgcolor: brand.skyLight, color: brand.navy, '&:hover': { bgcolor: brand.skyLight } }, '&:hover': { bgcolor: brand.canvas } }}>
               <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}>{n.icon}</ListItemIcon>
               <ListItemText primary={n.label} slotProps={{ primary: { fontWeight: active ? 700 : 500, fontSize: '0.92rem' } }} />
             </ListItemButton>
@@ -125,12 +125,12 @@ export default function AdminShell({ variant, children, permissions, isSuperAdmi
       </List>
       <Box sx={{ p: 1.5 }}>
         {(variant === 'super' || isSuperAdmin) && (
-          <ListItemButton component={Link} href={variant === 'super' ? '/admin' : '/super-admin'} sx={{ borderRadius: 2.5, color: 'rgba(255,255,255,.78)' }}>
+          <ListItemButton component={Link} href={variant === 'super' ? '/admin' : '/super-admin'} sx={{ borderRadius: 2.5, color: brand.muted }}>
             <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}><AdminPanelSettingsOutlinedIcon /></ListItemIcon>
             <ListItemText primary={variant === 'super' ? 'Admin panel' : 'Super Admin'} />
           </ListItemButton>
         )}
-        <ListItemButton component={Link} href="/" target="_blank" sx={{ borderRadius: 2.5, color: 'rgba(255,255,255,.78)' }}>
+        <ListItemButton component={Link} href="/" target="_blank" sx={{ borderRadius: 2.5, color: brand.muted }}>
           <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}><StorefrontOutlinedIcon /></ListItemIcon>
           <ListItemText primary="Open storefront" />
         </ListItemButton>

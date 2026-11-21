@@ -23,7 +23,10 @@ export async function sendEmail(mail: Email): Promise<boolean> {
       headers: { Authorization: `Bearer ${env.EMAIL_PROVIDER_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ from: env.EMAIL_FROM, to: [mail.to], subject: mail.subject, html: mail.html, text: mail.text }),
     });
-    if (!res.ok) logger.error('Email provider rejected message', { status: res.status });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => '');
+      logger.error('Email provider rejected message', { status: res.status, detail: detail.slice(0, 300) });
+    }
     return res.ok;
   } catch (e) {
     logger.error('Email send failed', { error: String(e) });

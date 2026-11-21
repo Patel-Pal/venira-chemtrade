@@ -23,7 +23,7 @@ npm run start
 ```bash
 npm run seed                 # roles, permissions, settings, categories, 142 catalogue entries, placeholder pages (idempotent)
 # one-time admin:
-BOOTSTRAP_SUPER_ADMIN_EMAIL=you@company.com BOOTSTRAP_SUPER_ADMIN_PASSWORD='<12+ chars>' npm run bootstrap:superadmin
+BOOTSTRAP_SUPER_ADMIN_EMAIL=you@company.com BOOTSTRAP_SUPER_ADMIN_PASSWORD='<12+ chars>' npm run bootstrap:admins
 # then remove the BOOTSTRAP_* variables
 ```
 `bootstrap:superadmin` refuses to run if a Super Admin already exists. Scripts read `.env` (`tsx --env-file=.env`); on a server pass variables through the environment instead.

@@ -59,8 +59,9 @@ export default async function HomePage() {
             <Box sx={{ display: 'grid', gap: { xs: 1.5, md: 2.5 }, gridTemplateColumns: { xs: 'repeat(2, minmax(0,1fr))', sm: 'repeat(3, minmax(0,1fr))', md: 'repeat(4, minmax(0,1fr))' } }}>
               {topCats.slice(0, 8).map((c, i) => (
                 <StaggerItem key={c.id}>
-                  <Box component={Link} href={`/products?category=${c.slug}`} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: { xs: 120, md: 150 }, p: { xs: 2, md: 2.5 }, borderRadius: 5, textDecoration: 'none', color: i % 3 === 0 ? '#fff' : 'text.primary', background: i % 3 === 0 ? `linear-gradient(135deg, ${brand.navy}, ${brand.navyDark})` : i % 3 === 1 ? brand.skyLight : brand.greenLight, border: `1px solid ${brand.line}`, boxShadow: shadows.soft, transition: 'transform .25s, box-shadow .25s', '&:hover': { transform: 'translateY(-4px)', boxShadow: shadows.lift } }}>
-                    <ScienceOutlinedIcon sx={{ opacity: 0.7 }} />
+                  <Box component={Link} href={`/products?category=${c.slug}`} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden', minHeight: { xs: 150, md: 200 }, p: { xs: 2, md: 3 }, borderRadius: 6, textDecoration: 'none', color: i % 3 === 0 ? '#fff' : 'text.primary', background: i % 3 === 0 ? `linear-gradient(135deg, ${brand.navy}, ${brand.navyDark})` : i % 3 === 1 ? brand.skyLight : brand.greenLight, border: `1px solid ${brand.line}`, boxShadow: shadows.soft, transition: 'transform .25s, box-shadow .25s', '&:hover': { transform: 'translateY(-4px)', boxShadow: shadows.lift } }}>
+                    <Box aria-hidden component="svg" viewBox="0 0 100 100" sx={{ position: 'absolute', right: -18, bottom: -18, width: { xs: 96, md: 140 }, height: { xs: 96, md: 140 }, opacity: 0.18 }}><polygon points="50,4 91,27 91,73 50,96 9,73 9,27" fill="none" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" /><polygon points="50,28 71,40 71,64 50,76 29,64 29,40" fill="none" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" /></Box>
+                    <ScienceOutlinedIcon sx={{ opacity: 0.8 }} />
                     <Box>
                       <Typography sx={{ fontWeight: 700, fontSize: { xs: '0.98rem', md: '1.1rem' }, lineHeight: 1.25 }}>{c.name}</Typography>
                       <Typography variant="caption" sx={{ opacity: 0.8 }}>{c.productCount} items</Typography>
@@ -81,6 +82,26 @@ export default async function HomePage() {
           <ProductRail products={s.products} />
         </Container>
       ))}
+
+      {promos.length === 0 && (
+        <Container maxWidth="lg" sx={{ mt: { xs: 6, md: 10 } }}>
+          <Box sx={{ display: 'grid', gap: 2.5, gridTemplateColumns: { xs: '1fr', md: '1.4fr 1fr' } }}>
+            {[
+              { title: 'New arrivals', text: 'See the latest ingredients added to the range.', cta: 'Browse latest', href: '/products?sort=newest', bg: `linear-gradient(135deg, ${brand.navy}, ${brand.navyDeep})` },
+              { title: 'Need pricing or specifications?', text: 'Tell us what you need and we will send a quote.', cta: 'Request a quote', href: '/contact', bg: `linear-gradient(135deg, ${brand.greenDark}, #2F5A12)` },
+            ].map((b, i) => (
+              <Reveal key={b.title} delay={i * 0.1}>
+                <Box component={Link} href={b.href} sx={{ position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', minHeight: { xs: 190, md: 240 }, borderRadius: 6, p: { xs: 2.5, md: 4 }, textDecoration: 'none', color: '#fff', background: b.bg }}>
+                  <Box aria-hidden component="svg" viewBox="0 0 100 100" sx={{ position: 'absolute', right: -30, top: -30, width: 220, height: 220, opacity: 0.14 }}><polygon points="50,4 91,27 91,73 50,96 9,73 9,27" fill="none" stroke="#fff" strokeWidth="3" strokeLinejoin="round" /><polygon points="50,24 74,38 74,66 50,80 26,66 26,38" fill="none" stroke="#fff" strokeWidth="3" strokeLinejoin="round" /></Box>
+                  <Typography variant="h3" component="h3" sx={{ color: '#fff', position: 'relative' }}>{b.title}</Typography>
+                  <Typography sx={{ mt: 0.5, opacity: 0.92, position: 'relative' }}>{b.text}</Typography>
+                  <Typography sx={{ mt: 1.5, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 0.5, position: 'relative' }}>{b.cta} <ArrowForwardIcon fontSize="small" /></Typography>
+                </Box>
+              </Reveal>
+            ))}
+          </Box>
+        </Container>
+      )}
 
       {promos.length > 0 && (
         <Container maxWidth="lg" sx={{ mt: { xs: 6, md: 10 } }}>

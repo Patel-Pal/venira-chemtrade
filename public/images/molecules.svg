@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="560" viewBox="0 0 560 560" fill="none" stroke="#5DB1CF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.16">
+  <!-- decorative molecular line-art: hexagon rings, bonds and atoms (abstract motif, not the logo) -->
+  <polygon points="120,60 164,85 164,135 120,160 76,135 76,85"/>
+  <polygon points="208,110 252,135 252,185 208,210 164,185 164,135" transform="translate(0,0)"/>
+  <polygon points="420,330 464,355 464,405 420,430 376,405 376,355"/>
+  <polygon points="332,380 376,405 376,455 332,480 288,455 288,405"/>
+  <path d="M252 135 L330 90 L392 120 M330 90 L350 30 M464 355 L520 330 M420 430 L440 500 M288 405 L230 440 L170 420 M76 135 L30 190 L60 250 M164 160 L170 420" />
+  <circle cx="330" cy="90" r="6"/><circle cx="392" cy="120" r="5"/><circle cx="350" cy="30" r="4"/>
+  <circle cx="520" cy="330" r="5"/><circle cx="440" cy="500" r="6"/><circle cx="230" cy="440" r="5"/>
+  <circle cx="170" cy="420" r="6"/><circle cx="30" cy="190" r="5"/><circle cx="60" cy="250" r="4"/>
+</svg>

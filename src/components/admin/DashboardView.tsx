@@ -33,17 +33,17 @@ export interface DashboardData {
 
 const RANGES = [['today', 'Today'], ['yesterday', 'Yesterday'], ['7d', 'Last 7 days'], ['30d', 'Last 30 days'], ['month', 'This month'], ['custom', 'Custom']] as const;
 
-function Kpi({ label, value, hint, tone = 'navy' }: { label: string; value: string; hint?: string; tone?: 'navy' | 'sky' | 'green' | 'warn' }) {
+function Kpi({ label, value, hint, tone = 'navy', highlight = false }: { label: string; value: string; hint?: string; tone?: 'navy' | 'sky' | 'green' | 'warn'; highlight?: boolean }) {
   const color = { navy: brand.navy, sky: '#2B88A6', green: brand.greenDark, warn: '#B45309' }[tone];
   return (
-    <Box sx={{ bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 4, p: 2.25, boxShadow: shadows.soft, borderTop: `3px solid ${color}` }}>
-      <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>{label}</Typography>
-      <Typography sx={{ fontSize: { xs: '1.35rem', md: '1.6rem' }, fontWeight: 800, color: 'text.primary', mt: 0.25 }}>{value}</Typography>
-      {hint && <Typography variant="caption" color="text.secondary">{hint}</Typography>}
+    <Box sx={{ position: 'relative', overflow: 'hidden', border: `1px solid ${highlight ? brand.navy : brand.line}`, borderRadius: 4, p: 2.25, boxShadow: shadows.soft, ...(highlight ? { background: `linear-gradient(135deg, ${brand.navy}, ${brand.navyDark})`, color: '#fff' } : { bgcolor: '#fff', borderTop: `3px solid ${color}` }) }}>
+      {highlight && <Box aria-hidden component="svg" viewBox="0 0 100 100" sx={{ position: 'absolute', right: -14, bottom: -18, width: 110, height: 110, opacity: 0.15 }}><polygon points="50,4 91,27 91,73 50,96 9,73 9,27" fill="none" stroke="#fff" strokeWidth="4" strokeLinejoin="round" /></Box>}
+      <Typography variant="caption" sx={{ fontWeight: 600, color: highlight ? 'rgba(255,255,255,.8)' : 'text.secondary' }}>{label}</Typography>
+      <Typography sx={{ fontSize: { xs: '1.35rem', md: '1.6rem' }, fontWeight: 800, color: highlight ? '#fff' : 'text.primary', mt: 0.25, position: 'relative' }}>{value}</Typography>
+      {hint && <Typography variant="caption" sx={{ color: highlight ? 'rgba(255,255,255,.75)' : 'text.secondary' }}>{hint}</Typography>}
     </Box>
   );
 }
-
 export default function DashboardView({ base = '/api/admin/dashboard', title = 'Dashboard' }: { base?: string; title?: string }) {
   const router = useRouter();
   const [range, setRange] = useState<string>('30d');
@@ -81,7 +81,7 @@ export default function DashboardView({ base = '/api/admin/dashboard', title = '
             <Kpi label="Total sales" value={money(data.totals.salesPaise)} hint="All time (paid orders)" />
             <Kpi label="Today's sales" value={money(data.totals.todayPaise)} tone="sky" />
             <Kpi label="Monthly revenue" value={money(data.totals.monthPaise)} tone="green" />
-            <Kpi label="Period revenue" value={money(data.totals.periodPaise)} hint={`${data.orders.period} orders · avg ${money(data.orders.avgOrderPaise)}`} />
+            <Kpi highlight label="Period revenue" value={money(data.totals.periodPaise)} hint={`${data.orders.period} orders · avg ${money(data.orders.avgOrderPaise)}`} />
             <Kpi label="Total orders" value={String(data.orders.total)} />
             <Kpi label="Pending orders" value={String(data.orders.pending)} tone="warn" />
             <Kpi label="Customers" value={String(data.customers)} tone="sky" />

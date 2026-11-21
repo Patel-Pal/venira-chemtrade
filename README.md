@@ -8,7 +8,7 @@ Three experiences: **storefront** (mobile-app feel), **/admin**, **/super-admin*
 npm install
 cp .env.example .env          # fill MONGODB_URI and AUTH_SECRET at minimum
 npm run seed                  # roles, permissions, categories, 142 catalogue entries from the PDF, placeholder pages
-BOOTSTRAP_SUPER_ADMIN_EMAIL=you@x.com BOOTSTRAP_SUPER_ADMIN_PASSWORD='long-password-12+' npm run bootstrap:superadmin
+BOOTSTRAP_SUPER_ADMIN_EMAIL=you@x.com BOOTSTRAP_SUPER_ADMIN_PASSWORD='long-password-12+' npm run bootstrap:admins
 npm run dev                   # http://localhost:3000   (admin: /admin, super admin: /super-admin)
 ```
 Without Razorpay/Cloudinary/email keys the store browses, but checkout (503), uploads (503) and emails (logged only) are disabled. New customers are auto-verified only in non-production when no email provider is configured.

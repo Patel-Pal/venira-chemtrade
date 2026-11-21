@@ -65,8 +65,8 @@ export default function Hero({ eyebrow, heading, subheading, ctaLabel = 'Browse 
           )}
           <motion.div initial={reduce ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5, ease }}>
             <Box sx={{ mt: 4, display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
-              <Button component={Link} href={ctaUrl} variant="contained" size="large">{ctaLabel}</Button>
-              <Button component={Link} href="/contact" variant="outlined" size="large">Request a quote</Button>
+              <Button component={Link} href={ctaUrl} variant="contained" size="large" sx={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}>{ctaLabel}</Button>
+              <Button component={Link} href="/contact" variant="outlined" size="large" sx={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}>Request a quote</Button>
             </Box>
           </motion.div>
           {stats.length > 0 && (

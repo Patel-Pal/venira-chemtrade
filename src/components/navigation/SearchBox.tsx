@@ -6,6 +6,7 @@ import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
 import HistoryIcon from '@mui/icons-material/History';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
@@ -51,6 +52,7 @@ export default function SearchBox({ autoFocus = false, onDone, placeholder = 'Se
   };
 
   return (
+    <Box sx={{ display: 'flex', alignItems: 'stretch', width: '100%' }}>
     <Autocomplete<Option, false, false, true>
       freeSolo
       openOnFocus
@@ -97,10 +99,14 @@ export default function SearchBox({ autoFocus = false, onDone, placeholder = 'Se
               ),
             },
           }}
-          sx={{ '& .MuiOutlinedInput-root': { borderRadius: 99, bgcolor: '#F1F5FA', '& fieldset': { borderColor: 'transparent' }, '&:hover fieldset': { borderColor: 'info.main' } }, '& input': { py: '10px !important' } }}
+          sx={{ '& .MuiOutlinedInput-root': { borderRadius: '99px 0 0 99px', bgcolor: '#fff', '& fieldset': { borderColor: '#C9D5E6', borderRightWidth: 0 }, '&:hover fieldset': { borderColor: 'info.main' }, '&.Mui-focused fieldset': { borderColor: 'primary.main', borderRightWidth: 0 } }, '& input': { py: '10px !important' } }}
         />
       )}
       clearOnBlur={false}
     />
+    <Button type="button" variant="contained" aria-label="Search" onClick={() => go(input)} sx={{ minWidth: 52, px: 2, borderRadius: '0 99px 99px 0', boxShadow: 'none', flexShrink: 0 }}>
+      <SearchIcon />
+    </Button>
+    </Box>
   );
 }
