@@ -10,7 +10,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const sp = await searchParams;
   return (
     <Box>
-      <Typography variant="h3" component="h1" sx={{ mb: 0.5 }}>Welcome back</Typography>
+      <Typography variant="h3" component="h1" sx={{ mb: 0.5, color: 'primary.dark' }}>Welcome back</Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>{sp.reset ? 'Password updated – please sign in.' : 'Sign in to your account.'}</Typography>
       <Suspense><LoginForm /></Suspense>
     </Box>

@@ -17,7 +17,7 @@ import { openRazorpay } from '@/lib/razorpay-client';
 import { qk } from '@/lib/query-keys';
 import { useUiStore } from '@/stores/ui.store';
 import { formatPaise } from '@/utils/money';
-import { brand } from '@/theme/tokens';
+import { brand, shadows } from '@/theme/tokens';
 
 export default function OrderDetailView({ id }: { id: string }) {
   const sp = useSearchParams();
@@ -66,9 +66,9 @@ export default function OrderDetailView({ id }: { id: string }) {
       {placed === 'failed' && <Alert severity="error">Your payment did not go through. You can try again below.</Alert>}
       {placed === 'pending' && <Alert severity="warning">Payment was not completed. You can complete it below while your items are reserved.</Alert>}
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap', alignItems: 'center', p: { xs: 2, md: 3 }, borderRadius: 5, border: `1px solid ${brand.line}`, boxShadow: shadows.soft, background: `radial-gradient(500px 200px at 100% 0%, ${brand.skyLight}, transparent 70%), #fff` }}>
         <Box>
-          <Typography variant="h4" component="h2">Order {order.orderNumber}</Typography>
+          <Typography variant="h4" component="h2" sx={{ color: 'primary.dark' }}>Order {order.orderNumber}</Typography>
           <Typography color="text.secondary" variant="body2">Placed {new Date(order.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -84,7 +84,7 @@ export default function OrderDetailView({ id }: { id: string }) {
         <Button onClick={() => router.push('/account/orders')}>All orders</Button>
       </Box>
 
-      <Box sx={{ bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 5, p: { xs: 2, md: 3 } }}>
+      <Box sx={{ bgcolor: '#fff', border: `1px solid ${brand.line}`, boxShadow: shadows.soft, borderRadius: 5, p: { xs: 2, md: 3 } }}>
         <Typography variant="h5" component="h3" sx={{ mb: 2 }}>Order tracking</Typography>
         <OrderTimeline status={order.status} history={order.statusHistory} />
         {order.tracking && (order.tracking.trackingNumber || order.tracking.carrier) && (
@@ -97,7 +97,7 @@ export default function OrderDetailView({ id }: { id: string }) {
       </Box>
 
       <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1.4fr 1fr' }, alignItems: 'start' }}>
-        <Box sx={{ bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 5, p: { xs: 2, md: 3 } }}>
+        <Box sx={{ bgcolor: '#fff', border: `1px solid ${brand.line}`, boxShadow: shadows.soft, borderRadius: 5, p: { xs: 2, md: 3 } }}>
           <Typography variant="h5" component="h3" sx={{ mb: 2 }}>Items</Typography>
           {items.map((i) => (
             <Box key={i.id} sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, py: 1.25, borderTop: `1px solid ${brand.line}`, '&:first-of-type': { borderTop: 0 } }}>
@@ -109,19 +109,19 @@ export default function OrderDetailView({ id }: { id: string }) {
           {[['Subtotal', order.subtotalPaise], ...(order.discountPaise ? [[`Discount${order.couponCode ? ` (${order.couponCode})` : ''}`, -order.discountPaise]] : []), ['Shipping', order.shippingPaise], ...(order.taxPaise ? [['Tax', order.taxPaise]] : [])].map(([l, v]) => (
             <Box key={String(l)} sx={{ display: 'flex', justifyContent: 'space-between' }}><Typography color="text.secondary">{l}</Typography><Typography>{Number(v) < 0 ? `− ${formatPaise(-Number(v))}` : formatPaise(Number(v))}</Typography></Box>
           ))}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}><Typography sx={{ fontWeight: 800 }}>Total</Typography><Typography sx={{ fontWeight: 800 }}>{formatPaise(order.totalPaise)}</Typography></Box>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1.5, p: 1.5, borderRadius: 3, bgcolor: brand.skyLight }}><Typography sx={{ fontWeight: 800 }}>Total</Typography><Typography sx={{ fontWeight: 800, color: 'primary.dark' }}>{formatPaise(order.totalPaise)}</Typography></Box>
         </Box>
         <Box sx={{ display: 'grid', gap: 2 }}>
           {[['Shipping address', order.shippingAddress], ['Billing address', order.billingAddress]].map(([t, a]) => {
             const ad = a as typeof order.shippingAddress;
             return (
-              <Box key={String(t)} sx={{ bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 5, p: 2.5 }}>
+              <Box key={String(t)} sx={{ bgcolor: '#fff', border: `1px solid ${brand.line}`, boxShadow: shadows.soft, borderRadius: 5, p: 2.5 }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 800, color: 'text.primary' }}>{String(t)}</Typography>
                 <Typography variant="body2" color="text.secondary">{ad.fullName}<br />{ad.line1}{ad.line2 ? `, ${ad.line2}` : ''}<br />{ad.city}, {ad.state} {ad.postalCode}<br />{ad.phone}</Typography>
               </Box>
             );
           })}
-          <Box sx={{ bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 5, p: 2.5 }}>
+          <Box sx={{ bgcolor: '#fff', border: `1px solid ${brand.line}`, boxShadow: shadows.soft, borderRadius: 5, p: 2.5 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 800, color: 'text.primary' }}>Shipping method</Typography>
             <Typography variant="body2" color="text.secondary">{order.shippingMethod.name}</Typography>
             {data.payment?.method && <Typography variant="body2" color="text.secondary">Paid via {data.payment.method}</Typography>}

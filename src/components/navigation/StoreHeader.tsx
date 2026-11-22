@@ -45,7 +45,7 @@ const NAV = [
 export function AnnouncementBar({ text }: { text?: string }) {
   if (!text) return null;
   return (
-    <Box role="note" sx={{ bgcolor: brand.navyDeep, color: '#fff', textAlign: 'center', py: 0.9, px: 2, fontSize: '0.8rem', letterSpacing: '0.02em' }}>
+    <Box role="note" sx={{ background: `linear-gradient(90deg, ${brand.navyDeep}, ${brand.navy} 50%, ${brand.navyDeep})`, color: '#fff', textAlign: 'center', py: 0.9, px: 2, fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.03em' }}>
       {text}
     </Box>
   );
@@ -97,7 +97,7 @@ export default function StoreHeader({ announcement }: { announcement?: string })
   return (
     <>
       <AnnouncementBar text={announcement} />
-      <AppBar position="sticky" color="inherit" elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.88)', backdropFilter: 'saturate(180%) blur(14px)', borderBottom: `1px solid ${brand.line}` }}>
+      <AppBar position="sticky" color="inherit" elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.86)', backdropFilter: 'saturate(180%) blur(16px)', borderBottom: `1px solid ${brand.line}`, boxShadow: '0 6px 24px rgba(16,36,63,0.05)', '&::after': { content: '""', position: 'absolute', left: 0, right: 0, bottom: -1, height: 2, background: `linear-gradient(90deg, ${brand.sky}, ${brand.green} 60%, transparent)`, opacity: 0.7 } }}>
         <Toolbar sx={{ gap: { xs: 0.5, md: 3 }, minHeight: { xs: 60, md: 76 }, maxWidth: 1280, width: '100%', mx: 'auto', px: { xs: 1, md: 3 } }}>
           <IconButton aria-label="Open menu" onClick={() => setMenuOpen(true)} sx={{ display: { md: 'none' } }}>
             <MenuIcon />
@@ -107,7 +107,7 @@ export default function StoreHeader({ announcement }: { announcement?: string })
             {NAV.map((n) => {
               const active = n.href === '/' ? pathname === '/' : pathname.startsWith(n.href);
               return (
-                <Button key={n.href} component={Link} href={n.href} color="inherit" aria-current={active ? 'page' : undefined} sx={{ color: active ? 'primary.main' : 'text.primary', fontWeight: active ? 700 : 500, position: 'relative', '&::after': { content: '""', position: 'absolute', left: 16, right: 16, bottom: 6, height: 2, borderRadius: 2, bgcolor: 'info.main', transform: active ? 'scaleX(1)' : 'scaleX(0)', transition: 'transform .25s' }, '&:hover::after': { transform: 'scaleX(1)' } }}>
+                <Button key={n.href} component={Link} href={n.href} color="inherit" aria-current={active ? 'page' : undefined} sx={{ color: active ? 'primary.main' : 'text.primary', fontWeight: active ? 700 : 500, position: 'relative', borderRadius: 99, bgcolor: active ? brand.skyLight : 'transparent', '&:hover': { bgcolor: brand.skyLight }, '&::after': { content: '""', position: 'absolute', left: 18, right: 18, bottom: 6, height: 2, borderRadius: 2, bgcolor: 'info.main', transform: active ? 'scaleX(1)' : 'scaleX(0)', transition: 'transform .25s' }, '&:hover::after': { transform: 'scaleX(1)' } }}>
                   {n.label}
                 </Button>
               );
@@ -145,7 +145,7 @@ export default function StoreHeader({ announcement }: { announcement?: string })
               </>
             ) : (
               status !== 'loading' && (
-                <Button component={Link} href="/login" variant="outlined" size="small" sx={{ ml: 1, display: { xs: 'none', md: 'inline-flex' } }}>
+                <Button component={Link} href="/login" variant="contained" size="small" sx={{ ml: 1, display: { xs: 'none', md: 'inline-flex' }, borderRadius: 99, px: 3 }}>
                   Sign in
                 </Button>
               )
