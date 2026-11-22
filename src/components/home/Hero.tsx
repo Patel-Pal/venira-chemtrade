@@ -40,7 +40,7 @@ export default function Hero({ eyebrow, heading, subheading, ctaLabel = 'Browse 
 
   return (
     <Box ref={ref} component="section" aria-labelledby="hero-title" sx={{ position: 'relative', overflow: 'hidden', background: `radial-gradient(1200px 500px at 85% -10%, ${brand.skyLight}, transparent 60%), radial-gradient(900px 500px at -10% 110%, ${brand.greenLight}, transparent 55%), #fff` }}>
-      <Container maxWidth="lg" sx={{ position: 'relative', pt: { xs: 5, md: 10 }, pb: { xs: 8, md: 14 }, display: 'grid', gap: { xs: 4, md: 6 }, gridTemplateColumns: { xs: '1fr', md: '1.1fr 0.9fr' }, alignItems: 'center' }}>
+      <Container maxWidth="lg" sx={{ position: 'relative', pt: { xs: 3, md: 10 }, pb: { xs: 3, md: 14 }, display: 'grid', gap: { xs: 2, md: 6 }, gridTemplateColumns: { xs: '1fr', md: '1.1fr 0.9fr' }, alignItems: 'center' }}>
         <Box sx={{ position: 'relative', zIndex: 1 }}>
           {eyebrow && (
             <motion.div initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }}>
@@ -49,7 +49,7 @@ export default function Hero({ eyebrow, heading, subheading, ctaLabel = 'Browse 
               </Typography>
             </motion.div>
           )}
-          <Typography id="hero-title" variant="h1" component="h1" sx={{ mt: 1.5, color: 'primary.dark' }} aria-label={heading}>
+          <Typography id="hero-title" variant="h1" component="h1" sx={{ mt: 1.5, color: 'primary.dark', fontSize: { xs: '1.95rem', md: 'clamp(2.25rem, 5vw + 1rem, 4rem)' } }} aria-label={heading}>
             {words.map((w, i) => (
               <Box key={i} component="span" aria-hidden sx={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom', mr: '0.25em' }}>
                 <motion.span style={{ display: 'inline-block' }} initial={reduce ? false : { y: '110%' }} animate={{ y: 0 }} transition={{ duration: 0.7, delay: 0.08 * i, ease }}>
@@ -60,21 +60,21 @@ export default function Hero({ eyebrow, heading, subheading, ctaLabel = 'Browse 
           </Typography>
           {subheading && (
             <motion.div initial={reduce ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.35, ease }}>
-              <Typography variant="subtitle1" sx={{ mt: 2.5, maxWidth: 520 }}>{subheading}</Typography>
+              <Typography variant="subtitle1" sx={{ mt: { xs: 1.5, md: 2.5 }, maxWidth: 520 }}>{subheading}</Typography>
             </motion.div>
           )}
           <motion.div initial={reduce ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5, ease }}>
-            <Box sx={{ mt: 4, display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+            <Box sx={{ mt: { xs: 2.5, md: 4 }, display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
               <Button component={Link} href={ctaUrl} variant="contained" size="large" sx={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}>{ctaLabel}</Button>
-              <Button component={Link} href="/contact" variant="outlined" size="large" sx={{ flex: { xs: '1 1 100%', sm: '0 0 auto' } }}>Request a quote</Button>
+              <Button component={Link} href="/contact" variant="outlined" size="large" sx={{ flex: { xs: '1 1 100%', sm: '0 0 auto' }, display: { xs: 'none', sm: 'inline-flex' } }}>Request a quote</Button>
             </Box>
           </motion.div>
           {stats.length > 0 && (
             <motion.div initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.7 }}>
-              <Box sx={{ mt: { xs: 4, md: 6 }, display: 'flex', gap: { xs: 1.5, md: 2 }, flexWrap: 'wrap' }}>
+              <Box sx={{ mt: { xs: 2.5, md: 6 }, display: 'flex', gap: { xs: 1.5, md: 2 }, flexWrap: 'wrap' }}>
                 {stats.map((s) => (
-                  <Box key={s.label} sx={{ px: 2.5, py: 1.5, borderRadius: 4, bgcolor: 'rgba(255,255,255,.75)', backdropFilter: 'blur(8px)', border: `1px solid ${brand.line}`, boxShadow: '0 4px 16px rgba(16,36,63,.06)' }}>
-                    <Typography sx={{ fontFamily: 'var(--font-display)', fontSize: '1.9rem', fontWeight: 600, lineHeight: 1, background: `linear-gradient(135deg, ${brand.navy}, ${brand.sky})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{s.value}</Typography>
+                  <Box key={s.label} sx={{ px: { xs: 2, md: 2.5 }, py: { xs: 1, md: 1.5 }, borderRadius: 4, bgcolor: 'rgba(255,255,255,.75)', backdropFilter: 'blur(8px)', border: `1px solid ${brand.line}`, boxShadow: '0 4px 16px rgba(16,36,63,.06)' }}>
+                    <Typography sx={{ fontFamily: 'var(--font-display)', fontSize: { xs: '1.5rem', md: '1.9rem' }, fontWeight: 600, lineHeight: 1, background: `linear-gradient(135deg, ${brand.navy}, ${brand.sky})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{s.value}</Typography>
                     <Typography variant="caption" color="text.secondary">{s.label}</Typography>
                   </Box>
                 ))}
@@ -83,6 +83,8 @@ export default function Hero({ eyebrow, heading, subheading, ctaLabel = 'Browse 
           )}
         </Box>
 
+        {/* On phones the logo visual is dropped so products appear on the first screen (the logo is already in the header). */}
+        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
         <motion.div style={{ y }} initial={reduce ? false : { opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9, delay: 0.2, ease }}>
           <Box sx={{ position: 'relative', mx: 'auto', width: '100%', maxWidth: 460, aspectRatio: '1 / 1', display: 'grid', placeItems: 'center' }}>
             <Box aria-hidden sx={{ position: 'absolute', inset: '-2%', borderRadius: '50%', border: `2px dashed ${brand.sky}66` }} />
@@ -104,6 +106,7 @@ export default function Hero({ eyebrow, heading, subheading, ctaLabel = 'Browse 
             )}
           </Box>
         </motion.div>
+        </Box>
       </Container>
     </Box>
   );

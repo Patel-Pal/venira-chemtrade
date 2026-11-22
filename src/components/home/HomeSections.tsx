@@ -22,9 +22,10 @@ const trust = [
 ];
 
 /** Floating trust bar that overlaps the bottom of the hero. */
-export function TrustStrip() {
+/** lush: render as a normal block (mobile, below the product rail) instead of overlapping the hero's bottom edge. */
+export function TrustStrip({ flush = false }: { flush?: boolean }) {
   return (
-    <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2, mt: { xs: -3, md: -5 } }}>
+    <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2, mt: flush ? 3 : { xs: -3, md: -5 } }}>
       <Reveal>
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, minmax(0,1fr))', md: 'repeat(4, minmax(0,1fr))' }, bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 5, boxShadow: shadows.lift, overflow: 'hidden' }}>
           {trust.map((t, i) => (
@@ -93,7 +94,7 @@ export function QuoteCta() {
             <Typography sx={{ mt: 1.5, opacity: 0.88 }}>Tell us what you are formulating. We will source it, share specifications and send you a quote.</Typography>
           </Box>
           <Box sx={{ position: 'relative', display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
-            <Button component={Link} href="/contact" variant="contained" size="large" endIcon={<ArrowForwardIcon />} sx={{ bgcolor: '#fff', color: brand.navy, '&:hover': { bgcolor: brand.skyLight } }}>Request a quote</Button>
+            <Button component={Link} href="/contact" variant="contained" size="large" endIcon={<ArrowForwardIcon />} sx={{ background: '#fff', color: brand.navy, boxShadow: 'none', '&:hover': { background: brand.skyLight, boxShadow: 'none' } }}>Request a quote</Button>
             <Button component={Link} href="/products" variant="outlined" size="large" sx={{ color: '#fff', borderColor: 'rgba(255,255,255,.55)', '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,.1)' } }}>Browse range</Button>
           </Box>
         </Box>

@@ -10,12 +10,12 @@ import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
-import Dialog from '@mui/material/Dialog';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import Menu from '@mui/material/Menu';
+import Collapse from '@mui/material/Collapse';
 import MenuItem from '@mui/material/MenuItem';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
@@ -69,17 +69,16 @@ export default function StoreHeader({ announcement }: { announcement?: string })
   const qc = useQueryClient();
   const menuOpen = useUiStore((s) => s.menuOpen);
   const setMenuOpen = useUiStore((s) => s.setMenuOpen);
-  const searchOpen = useUiStore((s) => s.searchOpen);
-  const setSearchOpen = useUiStore((s) => s.setSearchOpen);
   const cartCount = useCartCount();
   const wishCount = useWishCount();
   const { user, status, isStaff, setAnonymous } = useAuthStore();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
     setMenuOpen(false);
     setSearchOpen(false);
-  }, [pathname, setMenuOpen, setSearchOpen]);
+  }, [pathname, setMenuOpen]);
 
   const logout = async () => {
     setAnchor(null);
@@ -98,7 +97,7 @@ export default function StoreHeader({ announcement }: { announcement?: string })
     <>
       <AnnouncementBar text={announcement} />
       <AppBar position="sticky" color="inherit" elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.86)', backdropFilter: 'saturate(180%) blur(16px)', borderBottom: `1px solid ${brand.line}`, boxShadow: '0 6px 24px rgba(16,36,63,0.05)', '&::after': { content: '""', position: 'absolute', left: 0, right: 0, bottom: -1, height: 2, background: `linear-gradient(90deg, ${brand.sky}, ${brand.green} 60%, transparent)`, opacity: 0.7 } }}>
-        <Toolbar sx={{ gap: { xs: 0.5, md: 3 }, minHeight: { xs: 60, md: 76 }, maxWidth: 1280, width: '100%', mx: 'auto', px: { xs: 1, md: 3 } }}>
+        <Toolbar sx={{ gap: { xs: 0.5, md: 3 }, minHeight: { xs: 56, md: 76 }, maxWidth: 1280, width: '100%', mx: 'auto', px: { xs: 1, md: 3 } }}>
           <IconButton aria-label="Open menu" onClick={() => setMenuOpen(true)} sx={{ display: { md: 'none' } }}>
             <MenuIcon />
           </IconButton>
@@ -117,8 +116,8 @@ export default function StoreHeader({ announcement }: { announcement?: string })
             <SearchBox />
           </Box>
           <Box sx={{ ml: { xs: 'auto', md: 0 }, display: 'flex', alignItems: 'center' }}>
-            <IconButton aria-label="Search" onClick={() => setSearchOpen(true)} sx={{ display: { md: 'none' } }}>
-              <SearchIcon />
+            <IconButton aria-label={searchOpen ? 'Close search' : 'Search'} aria-expanded={searchOpen} onClick={() => setSearchOpen((o) => !o)} sx={{ display: { xs: 'inline-flex', md: 'none' } }}>
+              {searchOpen ? <CloseIcon /> : <SearchIcon />}
             </IconButton>
             <IconButton component={Link} href="/wishlist" aria-label={`Wishlist${wishCount ? `, ${wishCount} items` : ''}`} sx={{ display: { xs: 'none', md: 'inline-flex' } }}>
               <Badge badgeContent={wishCount} color="secondary" max={99}><FavoriteBorderIcon /></Badge>
@@ -152,6 +151,12 @@ export default function StoreHeader({ announcement }: { announcement?: string })
             )}
           </Box>
         </Toolbar>
+        {/* Mobile: search icon next to the cart; tapping it slides the search field open. Desktop keeps it inside the toolbar. */}
+        <Collapse in={searchOpen} timeout={250} unmountOnExit sx={{ display: { md: 'none' } }}>
+          <Box role="search" sx={{ px: 1.5, pb: 1.25, pt: 0.25 }}>
+            <SearchBox autoFocus placeholder="Search ingredients, SKU or category" onDone={() => setSearchOpen(false)} />
+          </Box>
+        </Collapse>
       </AppBar>
 
       <Drawer anchor="left" open={menuOpen} onClose={() => setMenuOpen(false)} slotProps={{ paper: { sx: { width: 300, maxWidth: '86vw' } } }}>
@@ -181,15 +186,6 @@ export default function StoreHeader({ announcement }: { announcement?: string })
           )}
         </List>
       </Drawer>
-
-      <Dialog fullScreen open={searchOpen} onClose={() => setSearchOpen(false)} aria-label="Search">
-        <Box sx={{ p: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Box sx={{ flex: 1 }}>
-            <SearchBox autoFocus onDone={() => setSearchOpen(false)} />
-          </Box>
-          <Button onClick={() => setSearchOpen(false)}>Cancel</Button>
-        </Box>
-      </Dialog>
     </>
   );
 }

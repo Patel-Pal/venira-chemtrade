@@ -10,6 +10,7 @@ import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
 import Hero from '@/components/home/Hero';
 import { TrustStrip, HowItWorks, QuoteCta } from '@/components/home/HomeSections';
 import ProductRail from '@/components/products/ProductRail';
+import CategoryChips from '@/components/navigation/CategoryChips';
 import { Reveal, Stagger, StaggerItem } from '@/components/animations/Reveal';
 import { SectionHeader } from '@/components/common/ui';
 import NewsletterForm from '@/components/navigation/NewsletterForm';
@@ -39,6 +40,9 @@ export default async function HomePage() {
   // Fallback so the page is never empty while the owner has not flagged any products.
   if (sections.length === 0 && home.latest.length) sections.push({ key: 'latest', eyebrow: 'Explore the range', title: 'Latest ingredients', subtitle: 'Browse what we supply. Prices are shared on request.', products: home.latest });
 
+  const firstSection = sections[0];
+  const chipItems = topCats.map((c) => ({ name: c.name, slug: c.slug }));
+
   return (
     <>
       <Hero
@@ -51,7 +55,29 @@ export default async function HomePage() {
         stats={stats}
       />
 
-      <TrustStrip />
+      {/* Desktop: trust strip overlaps the hero as designed. */}
+      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+        <TrustStrip />
+      </Box>
+
+      {/* Mobile: one-tap category chips + products straight under the hero, trust strip after them. */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {chipItems.length > 0 && (
+          <Container maxWidth="lg" sx={{ mt: 0.5 }}>
+            <CategoryChips items={chipItems} />
+          </Container>
+        )}
+        {firstSection && (
+          <Container maxWidth="lg" sx={{ mt: 2.5 }}>
+            <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 2, mb: 1.5 }}>
+              <Typography variant="h3" component="h2" sx={{ fontSize: '1.35rem' }}>{firstSection.title}</Typography>
+              <Button component={Link} href="/products" size="small" endIcon={<ArrowForwardIcon />}>View all</Button>
+            </Box>
+            <ProductRail products={firstSection.products} />
+          </Container>
+        )}
+        <TrustStrip flush />
+      </Box>
 
       {topCats.length > 0 && (
         <Container maxWidth="lg" sx={{ mt: { xs: 6, md: 10 } }}>
@@ -83,8 +109,9 @@ export default async function HomePage() {
         </Container>
       )}
 
-      {sections.map((s) => (
-        <Container key={s.key} maxWidth="lg" sx={{ mt: { xs: 6, md: 10 } }}>
+      {sections.map((s, i) => (
+        // The first section is shown higher up on phones (above); hide this copy there to avoid repeating it.
+        <Container key={s.key} maxWidth="lg" sx={{ mt: { xs: 6, md: 10 }, display: i === 0 ? { xs: 'none', md: 'block' } : undefined }}>
           <Reveal>
             <SectionHeader eyebrow={s.eyebrow} title={s.title} subtitle={s.subtitle} action={{ label: 'View all', href: '/products' }} />
           </Reveal>

@@ -7,8 +7,8 @@ import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Badge from '@mui/material/Badge';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import HomeIcon from '@mui/icons-material/Home';
-import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
-import GridViewIcon from '@mui/icons-material/GridView';
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
@@ -18,16 +18,17 @@ import PersonIcon from '@mui/icons-material/Person';
 import { useCartCount, useWishCount } from './StoreHeader';
 import { shadows } from '@/theme/tokens';
 
-/** Native-app style bottom navigation: Home, Categories, Wishlist, Cart, Account. Mobile/tablet only. */
+/** Native-app style bottom navigation: Home, Shop (all products + category chips), Wishlist, Cart, Account. Mobile/tablet only. */
 export default function BottomNav() {
   const pathname = usePathname();
   const cart = useCartCount();
   const wish = useWishCount();
-  const value = pathname === '/' ? '/' : ['/categories', '/wishlist', '/cart', '/account'].find((p) => pathname.startsWith(p)) ?? (pathname.startsWith('/products') ? '/categories' : false);
+  // Product list, product pages and the categories page all belong to the Shop tab.
+  const value = pathname === '/' ? '/' : pathname.startsWith('/products') || pathname.startsWith('/categories') ? '/products' : ['/wishlist', '/cart', '/account'].find((p) => pathname.startsWith(p)) ?? false;
 
   const items = [
     { href: '/', label: 'Home', icon: <HomeOutlinedIcon />, active: <HomeIcon /> },
-    { href: '/categories', label: 'Categories', icon: <GridViewOutlinedIcon />, active: <GridViewIcon /> },
+    { href: '/products', label: 'Shop', icon: <StorefrontOutlinedIcon />, active: <StorefrontIcon /> },
     { href: '/wishlist', label: 'Wishlist', icon: <Badge badgeContent={wish} color="secondary" max={99}><FavoriteBorderIcon /></Badge>, active: <Badge badgeContent={wish} color="secondary" max={99}><FavoriteIcon /></Badge> },
     { href: '/cart', label: 'Cart', icon: <Badge badgeContent={cart} color="primary" max={99}><ShoppingBagOutlinedIcon /></Badge>, active: <Badge badgeContent={cart} color="primary" max={99}><ShoppingBagIcon /></Badge> },
     { href: '/account', label: 'Account', icon: <PersonOutlineIcon />, active: <PersonIcon /> },

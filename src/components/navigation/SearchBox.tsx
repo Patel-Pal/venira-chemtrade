@@ -1,7 +1,7 @@
 'use client';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Typography from '@mui/material/Typography';
@@ -19,7 +19,8 @@ interface Option {
   label: string;
   href: string;
 }
-const passthrough = createFilterOptions<Option>({ stringify: () => '' }); // server already filtered; don't re-filter
+// The server already filtered the suggestions; MUI's default client-side filter would hide every option.
+const passthrough = (options: Option[]) => options;
 
 export default function SearchBox({ autoFocus = false, onDone, placeholder = 'Search ingredients, SKU or category' }: { autoFocus?: boolean; onDone?: () => void; placeholder?: string }) {
   const router = useRouter();
@@ -80,6 +81,7 @@ export default function SearchBox({ autoFocus = false, onDone, placeholder = 'Se
       renderInput={(params) => (
         <TextField
           {...params}
+          size="small"
           autoFocus={autoFocus}
           placeholder={placeholder}
           aria-label="Search products"
@@ -99,7 +101,8 @@ export default function SearchBox({ autoFocus = false, onDone, placeholder = 'Se
               ),
             },
           }}
-          sx={{ '& .MuiOutlinedInput-root': { borderRadius: '99px 0 0 99px', bgcolor: '#fff', '& fieldset': { borderColor: '#C9D5E6', borderRightWidth: 0 }, '&:hover fieldset': { borderColor: 'info.main' }, '&.Mui-focused fieldset': { borderColor: 'primary.main', borderRightWidth: 0 } }, '& input': { py: '10px !important' } }}
+          sx={{ '& .MuiOutlinedInput-root': { borderRadius: '99px 0 0 99px', bgcolor: '#fff', '& fieldset': { borderColor: '#C9D5E6', borderRightWidth: 0 }, '&:hover fieldset': { borderColor: 'info.main' }, '&.Mui-focused fieldset': { borderColor: 'primary.main', borderRightWidth: 0 } }, // Autocomplete adds 6px root padding; 4.5px here makes the whole field 44px (the 44px touch-target size).
+            '& input': { py: '4.5px !important' }, '& .MuiAutocomplete-endAdornment .MuiIconButton-root': { minWidth: 32, minHeight: 32, width: 32, height: 32 } }}
         />
       )}
       clearOnBlur={false}
