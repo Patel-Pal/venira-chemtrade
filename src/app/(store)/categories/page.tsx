@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import Image from 'next/image';
+import { optimizedImage } from '@/utils/image';
 import type { Metadata } from 'next';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -36,7 +38,7 @@ export default async function CategoriesPage() {
             {roots.map((c) => (
               <StaggerItem key={c.id}>
                 <Box component={Link} href={`/products?category=${c.slug}`} sx={{ display: 'flex', flexDirection: 'column', gap: 1, p: { xs: 2, md: 3 }, minHeight: { xs: 130, md: 170 }, bgcolor: '#fff', borderRadius: 5, border: `1px solid ${brand.line}`, boxShadow: shadows.soft, textDecoration: 'none', transition: 'transform .25s, box-shadow .25s', '&:hover': { transform: 'translateY(-4px)', boxShadow: shadows.lift } }}>
-                  <Box sx={{ width: 44, height: 44, borderRadius: 3, display: 'grid', placeItems: 'center', bgcolor: brand.skyLight, color: brand.navy }}><ScienceOutlinedIcon /></Box>
+                  {c.image?.url ? <Box sx={{ position: 'relative', height: { xs: 80, md: 110 }, mx: { xs: -2, md: -3 }, mt: { xs: -2, md: -3 }, mb: 0.5, borderTopLeftRadius: 24, borderTopRightRadius: 24, overflow: 'hidden' }}><Image src={optimizedImage(c.image.url, 600) ?? c.image.url} alt="" fill sizes="(max-width:600px) 50vw, 360px" style={{ objectFit: 'cover' }} /></Box> : <Box sx={{ width: 44, height: 44, borderRadius: 3, display: 'grid', placeItems: 'center', bgcolor: brand.skyLight, color: brand.navy }}><ScienceOutlinedIcon /></Box>}
                   <Typography sx={{ fontWeight: 700, fontSize: { xs: '1rem', md: '1.2rem' } }}>{c.name}</Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 'auto' }}>{c.productCount} items</Typography>
                 </Box>

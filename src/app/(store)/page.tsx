@@ -59,10 +59,11 @@ export default async function HomePage() {
             <Box sx={{ display: 'grid', gap: { xs: 1.5, md: 2.5 }, gridTemplateColumns: { xs: 'repeat(2, minmax(0,1fr))', sm: 'repeat(3, minmax(0,1fr))', md: 'repeat(4, minmax(0,1fr))' } }}>
               {topCats.slice(0, 8).map((c, i) => (
                 <StaggerItem key={c.id}>
-                  <Box component={Link} href={`/products?category=${c.slug}`} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden', minHeight: { xs: 150, md: 200 }, p: { xs: 2, md: 3 }, borderRadius: 6, textDecoration: 'none', color: i % 3 === 0 ? '#fff' : 'text.primary', background: i % 3 === 0 ? `linear-gradient(135deg, ${brand.navy}, ${brand.navyDark})` : i % 3 === 1 ? brand.skyLight : brand.greenLight, border: `1px solid ${brand.line}`, boxShadow: shadows.soft, transition: 'transform .25s, box-shadow .25s', '&:hover': { transform: 'translateY(-4px)', boxShadow: shadows.lift } }}>
+                  <Box component={Link} href={`/products?category=${c.slug}`} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden', minHeight: { xs: 150, md: 200 }, p: { xs: 2, md: 3 }, borderRadius: 6, textDecoration: 'none', color: c.image?.url || i % 3 === 0 ? '#fff' : 'text.primary', background: i % 3 === 0 ? `linear-gradient(135deg, ${brand.navy}, ${brand.navyDark})` : i % 3 === 1 ? brand.skyLight : brand.greenLight, border: `1px solid ${brand.line}`, boxShadow: shadows.soft, transition: 'transform .25s, box-shadow .25s', '&:hover': { transform: 'translateY(-4px)', boxShadow: shadows.lift } }}>
+                    {c.image?.url && (<><Image src={optimizedImage(c.image.url, 700) ?? c.image.url} alt="" fill sizes="(max-width:600px) 50vw, 300px" style={{ objectFit: 'cover' }} /><Box aria-hidden sx={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg, rgba(16,36,63,.15) 0%, rgba(16,36,63,.82) 100%)` }} /></>)}
                     <Box aria-hidden component="svg" viewBox="0 0 100 100" sx={{ position: 'absolute', right: -18, bottom: -18, width: { xs: 96, md: 140 }, height: { xs: 96, md: 140 }, opacity: 0.18 }}><polygon points="50,4 91,27 91,73 50,96 9,73 9,27" fill="none" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" /><polygon points="50,28 71,40 71,64 50,76 29,64 29,40" fill="none" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" /></Box>
-                    <ScienceOutlinedIcon sx={{ opacity: 0.8 }} />
-                    <Box>
+                    <ScienceOutlinedIcon sx={{ opacity: 0.9, position: 'relative', zIndex: 1 }} />
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
                       <Typography sx={{ fontWeight: 700, fontSize: { xs: '0.98rem', md: '1.1rem' }, lineHeight: 1.25 }}>{c.name}</Typography>
                       <Typography variant="caption" sx={{ opacity: 0.8 }}>{c.productCount} items</Typography>
                     </Box>
@@ -109,7 +110,8 @@ export default async function HomePage() {
             {promos.map((b, i) => (
               <Reveal key={b.id} delay={i * 0.1}>
                 <Box component={b.ctaUrl ? Link : 'div'} {...(b.ctaUrl ? { href: b.ctaUrl } : {})} sx={{ position: 'relative', display: 'flex', alignItems: 'flex-end', minHeight: { xs: 200, md: 260 }, borderRadius: 6, overflow: 'hidden', textDecoration: 'none', color: '#fff', background: `linear-gradient(135deg, ${brand.navy}, ${brand.navyDeep})`, p: { xs: 2.5, md: 4 } }}>
-                  {b.imageUrl && <Image src={optimizedImage(b.imageUrl, 1000) ?? b.imageUrl} alt="" fill sizes="(max-width:900px) 100vw, 600px" style={{ objectFit: 'cover', opacity: 0.55 }} />}
+                  {b.imageUrl && <Image src={optimizedImage(b.imageUrl, 1000) ?? b.imageUrl} alt="" fill sizes="(max-width:900px) 100vw, 600px" style={{ objectFit: 'cover' }} />}
+                  {b.imageUrl && <Box aria-hidden sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(16,36,63,.9) 0%, rgba(16,36,63,.55) 60%, rgba(16,36,63,.25) 100%)' }} />}
                   <Box sx={{ position: 'relative' }}>
                     <Typography variant="h3" component="h3" sx={{ color: '#fff' }}>{b.title}</Typography>
                     {b.subtitle && <Typography sx={{ mt: 0.5, opacity: 0.9 }}>{b.subtitle}</Typography>}
