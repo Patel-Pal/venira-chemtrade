@@ -1,5 +1,5 @@
 'use client';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useCartStore } from '@/stores/cart.store';
 import { useWishlistStore } from '@/stores/wishlist.store';
 import { useAuthStore } from '@/stores/auth.store';
@@ -19,7 +19,11 @@ export function useAddToCart() {
 }
 
 export function useWishlist(productId: string) {
-  const has = useWishlistStore((s) => s.productIds.includes(productId));
+  const stored = useWishlistStore((s) => s.productIds.includes(productId));
+  // The persisted wishlist only exists in the browser; report it after mount so server HTML and first client render match.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const has = mounted && stored;
   const toggle = useWishlistStore((s) => s.toggle);
   const status = useAuthStore((s) => s.status);
   const notify = useUiStore((s) => s.notify);

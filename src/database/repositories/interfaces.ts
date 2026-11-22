@@ -111,6 +111,8 @@ export interface IProductRepository {
   create(data: Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'ratingAverage' | 'ratingCount' | 'salesCount'>): Promise<Product>;
   update(id: ID, patch: Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Product | null>;
   delete(id: ID): Promise<boolean>;
+  /** Number of products per category for the given status, in ONE grouped query (replaces a count query per category). */
+  countByCategory(status: ProductStatus): Promise<Record<ID, number>>;
   incrementSales(items: { productId: ID; quantity: number }[]): Promise<void>;
   setRating(id: ID, average: number, count: number): Promise<void>;
 

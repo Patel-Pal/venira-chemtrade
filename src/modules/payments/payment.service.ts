@@ -7,6 +7,7 @@ import { createRazorpayRefund, fetchRazorpayPayment, verifyCheckoutSignature } f
 import { sendEmail, templates } from '@/services/email';
 import { formatPaise } from '@/utils/money';
 import { audit } from '../audit/audit.service';
+import { revalidateCatalog } from '@/lib/cache';
 import type { Order } from '@/types/domain';
 
 type Outcome = 'confirmed' | 'already_confirmed' | 'not_found' | 'amount_mismatch' | 'not_captured';
@@ -52,6 +53,7 @@ export async function confirmPayment(input: {
   if (!moved) return { outcome: 'already_confirmed', orderId: order.id };
 
   await finalizeStock(repos, moved, wasSystemExpired);
+  revalidateCatalog(); // stock was committed: availability shown in listings changed
   const items = await repos.orders.items(moved.id);
   await repos.products.incrementSales(items.map((i) => ({ productId: i.productId, quantity: i.quantity })));
   if (moved.couponId) await repos.coupons.recordUsage(moved.couponId, moved.userId, moved.id, moved.discountPaise);

@@ -2,14 +2,14 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Container from '@mui/material/Container';
 import ProductDetailView from '@/components/products/ProductDetailView';
-import { cached } from '@/lib/cache';
-import { getProductDetail, getRelatedProducts } from '@/modules/products/catalog.service';
+import { getProduct, getRelated } from '@/modules/products/cached';
 import { getPublicSettings } from '@/modules/settings/public-settings';
 
 export const dynamic = 'force-dynamic';
 
-const loadProduct = cached(async (slug: string) => getProductDetail(slug), ['product-detail'], 60);
-const loadRelated = cached(async (id: string) => getRelatedProducts(id, 8), ['product-related'], 120);
+// Shared with /api/products/[slug]: one cache entry serves both the page and the API.
+const loadProduct = getProduct;
+const loadRelated = getRelated;
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 

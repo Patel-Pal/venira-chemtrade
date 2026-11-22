@@ -266,3 +266,18 @@ describe('RBAC and audit', () => {
     expect(JSON.stringify(logs.items)).not.toMatch(/Password123|passwordHash/);
   });
 });
+
+describe('category counts (single grouped query)', () => {
+  it('counts published products per category, rolling subcategories up into their parent', async () => {
+    const sub = await mods.repos.categories.create({ name: 'Sub Actives', slug: 'sub-actives', parentId: ctx.cat.id, displayOrder: 1, isActive: true });
+    await mods.admin.createProduct({ name: 'Sub Product', categoryId: sub.id, status: 'published', dataStatus: 'verified', benefits: [], ingredients: [], specifications: [], tags: [], isFeatured: false, isBestSeller: false, isNewArrival: false, seo: {}, variants: [] } as any, actor);
+    await mods.repos.products.update(ctx.p3.id, { status: 'draft' }); // drafts must not be counted
+    const direct = await mods.repos.products.countByCategory('published');
+    expect(direct[ctx.cat.id]).toBe(2); // Niacinamide + Kojic Acid (Quote Only Gum is now a draft)
+    expect(direct[sub.id]).toBe(1);
+    const cats = await mods.catalog.listPublicCategories();
+    expect(cats.find((c) => c.id === ctx.cat.id)!.productCount).toBe(3); // parent = own 2 + child 1
+    expect(cats.find((c) => c.id === sub.id)!.productCount).toBe(1);
+    expect(cats.find((c) => c.id === ctx.cat.id)!.parentId).toBeNull();
+  });
+});

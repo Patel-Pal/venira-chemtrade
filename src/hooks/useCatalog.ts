@@ -1,5 +1,5 @@
 'use client';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery, type QueryClient } from '@tanstack/react-query';
 import { get } from '@/lib/api-client';
 import { qk } from '@/lib/query-keys';
 import type { ProductCardDTO, ProductDetailDTO } from '@/modules/products/catalog.service';
@@ -22,14 +22,26 @@ export interface CategoryDTO {
 
 export type ProductParams = Record<string, string | number | boolean | undefined>;
 
-export function useProducts(params: ProductParams, enabled = true) {
+export const fetchProducts = (params: ProductParams) => get<Paged<ProductCardDTO>>('/api/products', params);
+
+/**
+ * initialData = the page the server already rendered for exactly these params. Pass it ONLY when params equal the
+ * server's params (TanStack applies initialData to whatever key the query has).
+ */
+export function useProducts(params: ProductParams, enabled = true, initialData?: Paged<ProductCardDTO>) {
   return useQuery({
     queryKey: qk.products.list(params),
-    queryFn: () => get<Paged<ProductCardDTO>>('/api/products', params),
+    queryFn: () => fetchProducts(params),
     placeholderData: keepPreviousData, // keeps the grid on screen while filters/pages change
     staleTime: 60_000,
     enabled,
+    initialData,
   });
+}
+
+/** Warm the cache for the next page so pressing 'next' feels instant. */
+export function prefetchProducts(qc: QueryClient, params: ProductParams) {
+  return qc.prefetchQuery({ queryKey: qk.products.list(params), queryFn: () => fetchProducts(params), staleTime: 60_000 });
 }
 
 export function useProductDetail(slug: string | null) {
@@ -41,8 +53,9 @@ export function useProductDetail(slug: string | null) {
   });
 }
 
-export function useCategories() {
-  return useQuery({ queryKey: qk.categories, queryFn: () => get<{ items: CategoryDTO[] }>('/api/categories'), staleTime: 10 * 60_000, select: (d) => d.items });
+/** initial = categories the server already loaded (seeds the shared cache so no extra request is made). */
+export function useCategories(enabled = true, initial?: CategoryDTO[]) {
+  return useQuery({ queryKey: qk.categories, queryFn: () => get<{ items: CategoryDTO[] }>('/api/categories'), staleTime: 10 * 60_000, select: (d) => d.items, enabled, initialData: initial ? { items: initial } : undefined });
 }
 
 export function useProductsByIds(ids: string[]) {

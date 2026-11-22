@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CategoryModel, ImageModel, InventoryModel, ProductModel, VariantModel } from '../../models';
-import type { Category, ID, Product, ProductImage, ProductVariant } from '@/types/domain';
+import type { Category, ID, Product, ProductImage, ProductStatus, ProductVariant } from '@/types/domain';
 import type { ICategoryRepository, IProductRepository, ProductListQuery } from '../interfaces';
 import { cleanPatch, escapeRegex, isId, mapDoc, oid, oids, paged, skip } from './helpers';
 
@@ -162,6 +162,10 @@ export class MongoProductRepository implements IProductRepository {
   async delete(id: ID) {
     if (!isId(id)) return false;
     return (await ProductModel.deleteOne({ _id: id })).deletedCount === 1;
+  }
+  async countByCategory(status: ProductStatus) {
+    const rows = await ProductModel.aggregate([{ $match: { status } }, { $group: { _id: '$categoryId', n: { $sum: 1 } } }]);
+    return Object.fromEntries(rows.map((r) => [String(r._id), r.n as number]));
   }
   async incrementSales(items: { productId: ID; quantity: number }[]) {
     await Promise.all(items.map((i) => ProductModel.updateOne({ _id: i.productId }, { $inc: { salesCount: i.quantity } })));

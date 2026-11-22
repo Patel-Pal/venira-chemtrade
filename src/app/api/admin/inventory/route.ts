@@ -4,6 +4,7 @@ import { getRepos } from '@/database/repositories';
 import { audit } from '@/modules/audit/audit.service';
 import { Errors } from '@/lib/errors';
 import { pageQuerySchema, stockAdjustSchema } from '@/schemas';
+import { revalidateCatalog } from '@/lib/cache';
 
 export const GET = route({ access: 'staff', permission: 'inventory.read' }, async ({ req }) => {
   const q = parseQuery(req, pageQuerySchema.extend({ search: z.string().trim().max(60).optional(), filter: z.enum(['low', 'out']).optional() }));
@@ -33,6 +34,7 @@ export const POST = route({ access: 'staff', permission: 'inventory.adjust' }, a
   try {
     const after = await repos.inventory.adjust(b.variantId, b.delta, b.reason, auth!.user.id);
     await audit({ userId: auth!.user.id, ip, action: 'inventory.adjust', resourceType: 'variant', resourceId: b.variantId, before: { onHand: before?.quantityOnHand ?? 0 }, after: { onHand: after.quantityOnHand }, meta: { reason: b.reason } });
+    revalidateCatalog(); // customers should see the new availability
     return after;
   } catch (e) {
     if (e instanceof Error && e.message === 'INSUFFICIENT_STOCK_FOR_ADJUSTMENT') throw Errors.unprocessable('Adjustment would reduce stock below reserved quantity');

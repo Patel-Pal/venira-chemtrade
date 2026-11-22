@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -25,8 +26,11 @@ import ListItemText from '@mui/material/ListItemText';
 import TuneIcon from '@mui/icons-material/Tune';
 import CloseIcon from '@mui/icons-material/Close';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
-import { useCategories, useProducts } from '@/hooks/useCatalog';
+import { prefetchProducts, useCategories, useProducts, type CategoryDTO, type Paged } from '@/hooks/useCatalog';
+import type { ProductCardDTO } from '@/modules/products/catalog.service';
+import { PAGE_SIZE, toListParams, type ListFilters, type ListParams } from '@/lib/list-params';
 import { ProductGrid } from './ProductCard';
+import CategoryChips from '@/components/navigation/CategoryChips';
 import { EmptyState, ErrorNote, ProductGridSkeleton } from '@/components/common/ui';
 import { DEFAULT_FILTERS, useFilterStore, type SortKey } from '@/stores/filter.store';
 import { useUiStore } from '@/stores/ui.store';
@@ -39,7 +43,6 @@ const SORTS: { value: SortKey; label: string }[] = [
   { value: 'popularity', label: 'Popularity' },
   { value: 'rating', label: 'Customer rating' },
 ];
-const PAGE_SIZE = 12;
 
 function FilterGroup({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   return (
@@ -52,8 +55,9 @@ function FilterGroup({ title, children, defaultOpen = true }: { title: string; c
   );
 }
 
-function FilterPanel({ onApply }: { onApply?: () => void }) {
-  const f = useFilterStore();
+function FilterPanel({ onApply, view }: { onApply?: () => void; view?: Partial<ListFilters> }) {
+  const live = useFilterStore();
+  const f = view ? { ...live, ...view } : live;
   const { data: cats = [] } = useCategories();
   const roots = cats.filter((c) => !c.parentId);
   const [min, setMin] = useState(f.minPrice);
@@ -101,15 +105,28 @@ function FilterPanel({ onApply }: { onApply?: () => void }) {
     </Box>
   );
 }
-export default function ProductListing({ title = 'All ingredients' }: { title?: string }) {
-  const router = useRouter();
+interface ListingProps {
+  title?: string;
+  /** Everything below comes from the server render of the same URL (see app/(store)/products/page.tsx). */
+  initialParams: ListParams;
+  initialFilters: ListFilters;
+  initialPage: number;
+  initialData?: Paged<ProductCardDTO>;
+  initialCategories?: CategoryDTO[];
+}
+
+export default function ProductListing({ title = 'All ingredients', initialParams, initialFilters, initialPage, initialData, initialCategories }: ListingProps) {
   const pathname = usePathname();
   const sp = useSearchParams();
-  const f = useFilterStore();
+  const qc = useQueryClient();
+  const live = useFilterStore();
+  // Until the client store has read the URL (one effect tick) show what the server rendered, so nothing flickers.
+  const [ready, setReady] = useState(false);
+  const f = ready ? live : { ...live, ...initialFilters, page: initialPage };
   const filterOpen = useUiStore((s) => s.filterOpen);
   const setFilterOpen = useUiStore((s) => s.setFilterOpen);
   const hydrated = useRef(false);
-  const { data: cats = [] } = useCategories();
+  const { data: cats = [] } = useCategories(true, initialCategories);
 
   // URL -> store (once), store -> URL (afterwards). URL stays shareable; store drives the UI.
   useEffect(() => {
@@ -121,6 +138,7 @@ export default function ProductListing({ title = 'All ingredients' }: { title?: 
       sort: (SORTS.find((s) => s.value === sp.get('sort'))?.value ?? 'newest') as SortKey,
     });
     f.setPage(Math.max(1, Number(sp.get('page') ?? 1) || 1));
+    setReady(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // Navigating from the header search while already on this page changes the URL: follow it.
@@ -133,24 +151,29 @@ export default function ProductListing({ title = 'All ingredients' }: { title?: 
   }, [urlQ, urlCat]);
 
   const params = useMemo(
-    () => ({
-      page: f.page, limit: PAGE_SIZE, sort: f.sort, q: f.q || undefined, category: f.category || undefined,
-      minPrice: f.minPrice || undefined, maxPrice: f.maxPrice || undefined, inStock: f.inStock || undefined, minRating: f.minRating || undefined,
-    }),
-    [f.page, f.sort, f.q, f.category, f.minPrice, f.maxPrice, f.inStock, f.minRating],
+    () => (ready ? toListParams({ q: f.q, category: f.category, minPrice: f.minPrice, maxPrice: f.maxPrice, inStock: f.inStock, minRating: f.minRating, sort: f.sort }, f.page) : initialParams),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ready, f.page, f.sort, f.q, f.category, f.minPrice, f.maxPrice, f.inStock, f.minRating, initialParams],
   );
 
+  // Keep the address bar in sync WITHOUT a Next navigation (router.replace would re-run the server page on every filter change).
   useEffect(() => {
-    if (!hydrated.current) return;
+    if (!ready) return;
     const qs = new URLSearchParams();
     Object.entries(params).forEach(([k, v]) => v !== undefined && !(k === 'limit') && !(k === 'page' && v === 1) && !(k === 'sort' && v === 'newest') && qs.set(k, String(v)));
     const next = qs.toString() ? `${pathname}?${qs}` : pathname;
-    router.replace(next, { scroll: false });
-  }, [params, pathname, router]);
+    if (next !== `${window.location.pathname}${window.location.search}`) window.history.replaceState(null, '', next);
+  }, [ready, params, pathname]);
 
-  const { data, isLoading, isFetching, error, refetch } = useProducts(params, hydrated.current || true);
+  // Reuse the server-rendered page only while the params are exactly the ones it was rendered for.
+  const sameAsServer = JSON.stringify(params) === JSON.stringify(initialParams);
+  const { data, isLoading, isFetching, error, refetch } = useProducts(params, true, sameAsServer ? initialData : undefined);
   const activeCategory = cats.find((c) => c.slug === f.category);
   const pages = data ? Math.max(1, Math.ceil(data.total / PAGE_SIZE)) : 1;
+  // Warm the next page in the background so pressing 'next' is instant.
+  useEffect(() => {
+    if (data && params.page < pages) void prefetchProducts(qc, { ...params, page: params.page + 1 });
+  }, [data, pages, params, qc]);
   const activeCount = [f.category, f.minPrice, f.maxPrice, f.inStock || '', f.minRating || ''].filter(Boolean).length;
 
   const chips: { label: string; clear: () => void }[] = [];
@@ -164,10 +187,14 @@ export default function ProductListing({ title = 'All ingredients' }: { title?: 
   return (
     <Box sx={{ display: 'grid', gap: { md: 4 }, gridTemplateColumns: { xs: '1fr', md: '260px 1fr' }, alignItems: 'start' }}>
       <Box sx={{ display: { xs: 'none', md: 'block' }, position: 'sticky', top: 100, bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 5, p: 2.5, boxShadow: shadows.soft, maxHeight: 'calc(100vh - 120px)', overflowY: 'auto' }}>
-        <FilterPanel />
+        <FilterPanel view={f} />
       </Box>
 
       <Box sx={{ minWidth: 0 }}>
+        {/* Phones: one-tap category filter (the desktop sidebar already lists categories). */}
+        <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 1.5 }}>
+          <CategoryChips activeSlug={f.category} onSelect={(slug) => f.set({ category: slug })} />
+        </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, mb: 2.5, flexWrap: 'wrap', p: { xs: 2, md: 3 }, borderRadius: 5, border: `1px solid ${brand.line}`, background: `radial-gradient(500px 200px at 100% 0%, ${brand.skyLight}, transparent 70%), radial-gradient(400px 200px at 0% 100%, ${brand.greenLight}, transparent 70%), #fff`, boxShadow: shadows.soft }}>
           <Box>
             <Typography variant="h2" component="h1" sx={{ fontSize: { xs: '1.6rem', md: '2.2rem' }, color: 'primary.dark' }}>{activeCategory?.name ?? (f.q ? `Results for "${f.q}"` : title)}</Typography>
@@ -210,7 +237,7 @@ export default function ProductListing({ title = 'All ingredients' }: { title?: 
           <IconButton aria-label="Close filters" onClick={() => setFilterOpen(false)}><CloseIcon /></IconButton>
         </Box>
         <Divider />
-        <Box sx={{ p: 2, overflowY: 'auto' }}><FilterPanel /></Box>
+        <Box sx={{ p: 2, overflowY: 'auto' }}><FilterPanel view={f} /></Box>
         <Box sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider' }}>
           <Button fullWidth variant="contained" size="large" onClick={() => setFilterOpen(false)}>Show {data?.total ?? ''} results</Button>
         </Box>

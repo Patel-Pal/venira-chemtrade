@@ -1,6 +1,7 @@
 import { getRepos } from '@/database/repositories';
 import { AppError, Errors } from '@/lib/errors';
 import { audit } from '../audit/audit.service';
+import { revalidateCatalog } from '@/lib/cache';
 import type { Order, OrderStatus } from '@/types/domain';
 
 /** Manual transitions an admin may perform. `confirmed` from unpaid states and `refunded` are system/payment driven only. */
@@ -57,6 +58,7 @@ export async function updateOrderStatus(orderId: string, to: OrderStatus, note: 
   if (!updated) throw Errors.conflict('Order was modified by someone else. Refresh and retry.');
   if (to === 'cancelled') await restockOrder(order, note ?? 'Order cancelled', 'cancel');
   if (to === 'returned') await restockOrder(order, note ?? 'Order returned', 'return');
+  if (to === 'cancelled' || to === 'returned') revalidateCatalog(); // stock came back
   await audit({
     userId: actor.userId, ip: actor.ip, action: `order.status.${to}`, resourceType: 'order', resourceId: orderId,
     before: { status: order.status }, after: { status: to }, meta: { note },

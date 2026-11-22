@@ -15,6 +15,10 @@ const schema = z.object({
   EMAIL_FROM: z.string().optional().default('Venira Chemtrade <no-reply@localhost>'),
   CRON_SECRET: z.string().optional().default(''),
   CHECKOUT_RESERVATION_MINUTES: z.coerce.number().int().min(5).max(120).default(20),
+  // Database tuning (all optional)
+  DB_MIN_POOL_SIZE: z.coerce.number().int().min(0).max(20).default(3),
+  /** Mongoose auto-creates indexes on connect. Default: on in development, OFF in production (run `npm run db:indexes` instead). */
+  DB_AUTO_INDEX: z.enum(['true', 'false']).optional(),
 });
 
 export type Env = z.infer<typeof schema>;

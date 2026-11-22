@@ -15,6 +15,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "seed": "tsx --env-file=.env src/database/seeds/run.ts",
+    "db:indexes": "tsx --env-file=.env src/database/seeds/ensure-indexes.ts",
     "bootstrap:admins": "tsx --env-file=.env src/database/seeds/bootstrap-super-admin.ts",
     "bootstrap:superadmin": "tsx --env-file=.env src/database/seeds/bootstrap-super-admin.ts"
   },

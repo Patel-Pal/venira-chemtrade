@@ -1,5 +1,6 @@
 /* Idempotent seed: npm run seed. Safe to re-run; existing records are left untouched. */
 import { getRepos } from '../repositories';
+import { ensureIndexes } from '../connections/mongo';
 import { ALL_PERMISSIONS, DEFAULT_ROLES, PERMISSIONS } from '@/constants/permissions';
 import { PermissionModel } from '../models';
 import { CATALOGUE, PDF_CONTACT } from './catalogue';
@@ -9,6 +10,7 @@ const PENDING = 'Content pending - to be provided by Venira Chemtrade via the Ad
 
 async function main() {
   const repos = await getRepos();
+  console.log(`indexes ensured for ${await ensureIndexes()} collections`);
 
   // 1. Permissions & roles
   for (const key of ALL_PERMISSIONS) {

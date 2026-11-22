@@ -49,7 +49,7 @@ export interface ProductDetailDTO extends ProductCardDTO {
 }
 
 /** Returns the category and all of its descendants (so a parent shows its children's products). */
-export async function categoryTreeIds(categories: Category[], rootId: string): Promise<string[]> {
+export function categoryTreeIds(categories: Category[], rootId: string): string[] {
   const ids = new Set<string>([rootId]);
   let grew = true;
   while (grew) {
@@ -130,7 +130,7 @@ export async function listPublicProducts(q: PublicProductQuery): Promise<Page<Pr
     const cats = await repos.categories.list({ activeOnly: true });
     const match = cats.find((c) => c.slug === q.category);
     if (!match) return { items: [], total: 0, page: q.page, limit: q.limit };
-    categoryIds = await categoryTreeIds(cats, match.id);
+    categoryIds = categoryTreeIds(cats, match.id);
   }
   const page = await repos.products.list({
     page: q.page, limit: q.limit, search: q.q, categoryIds, status: 'published',
@@ -197,14 +197,9 @@ export async function suggest(term: string) {
 
 export async function listPublicCategories() {
   const repos = await getRepos();
-  const cats = await repos.categories.list({ activeOnly: true });
-  const counts = await Promise.all(
-    cats.map(async (c) => {
-      const ids = await categoryTreeIds(cats, c.id);
-      const p = await repos.products.list({ page: 1, limit: 1, categoryIds: ids, status: 'published' });
-      return [c.id, p.total] as const;
-    }),
-  );
-  const countMap = new Map(counts);
+  // 2 queries total (categories + one grouped count) instead of one count query per category.
+  const [cats, direct] = await Promise.all([repos.categories.list({ activeOnly: true }), repos.products.countByCategory('published')]);
+  const totalFor = (id: string) => categoryTreeIds(cats, id).reduce((sum, cid) => sum + (direct[cid] ?? 0), 0);
+  const countMap = new Map(cats.map((c) => [c.id, totalFor(c.id)] as const));
   return cats.map((c) => ({ id: c.id, name: c.name, slug: c.slug, description: c.description, parentId: c.parentId ?? null, image: c.image, productCount: countMap.get(c.id) ?? 0 }));
 }

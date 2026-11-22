@@ -55,12 +55,17 @@ async function resolve(): Promise<AuthContext | null> {
   const claims = await verifySession(token, getEnv().AUTH_SECRET);
   if (!claims) return null;
   const repos = await getRepos();
-  const session = await repos.sessions.findActiveByTokenHash(sha256(claims.jti));
+  // One parallel round trip (not three in a row): session, user and - via the signed token's role claim - the role.
+  const [session, user, hintedRole] = await Promise.all([
+    repos.sessions.findActiveByTokenHash(sha256(claims.jti)),
+    repos.users.findById(claims.uid),
+    repos.roles.findByKey(claims.role),
+  ]);
   if (!session || session.userId !== claims.uid) return null; // revoked / expired
-  const user = await repos.users.findById(claims.uid);
   if (!user || user.status === 'blocked' || user.status === 'deactivated') return null;
   const { passwordHash: _ph, ...publicUser } = user;
-  const role = await repos.roles.findById(user.roleId);
+  // The claim is only a lookup hint: trust it only if it matches the user's current role, else load the role by id.
+  const role = hintedRole && hintedRole.key === user.roleKey ? hintedRole : await repos.roles.findById(user.roleId);
   const permissions = new Set<string>([...(role?.permissions ?? []), ...user.extraPermissions]);
   const isSuperAdmin = user.roleKey === 'super_admin';
   if (isSuperAdmin) ALL_PERMISSIONS.forEach((p) => permissions.add(p));
