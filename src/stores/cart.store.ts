@@ -51,7 +51,9 @@ export const useCartStore = create<CartState>()(
       version: 1,
       storage: createJSONStorage(() => localStorage),
       partialize: (s) => ({ items: s.items, couponCode: s.couponCode }),
-      onRehydrateStorage: () => () => useCartStore.setState({ hydrated: true }),
+      // NOTE: `hydrated` is flipped by <SessionBootstrap/> after React hydrates. localStorage is read synchronously when the
+      // store is created, so an onRehydrateStorage callback would reference `useCartStore` before it is initialised and
+      // fail silently, leaving the cart stuck on its loading state.
     },
   ),
 );

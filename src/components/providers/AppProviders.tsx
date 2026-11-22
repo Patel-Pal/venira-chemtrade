@@ -47,6 +47,12 @@ function SessionBootstrap() {
   const cartHydrated = useCartStore((s) => s.hydrated);
   const synced = useRef<string | null>(null);
 
+  // The persisted cart is already loaded from localStorage at this point; mark it ready after hydration so
+  // server and first client render match (no count shown until now).
+  useEffect(() => {
+    useCartStore.setState({ hydrated: true });
+  }, []);
+
   const { data, isError, isSuccess } = useQuery({ queryKey: qk.me, queryFn: () => get<MeResponse>('/api/auth/me'), staleTime: 5 * 60_000 });
 
   useEffect(() => {

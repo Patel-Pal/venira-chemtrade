@@ -40,7 +40,7 @@ export default function Hero({ eyebrow, heading, subheading, ctaLabel = 'Browse 
 
   return (
     <Box ref={ref} component="section" aria-labelledby="hero-title" sx={{ position: 'relative', overflow: 'hidden', background: `radial-gradient(1200px 500px at 85% -10%, ${brand.skyLight}, transparent 60%), radial-gradient(900px 500px at -10% 110%, ${brand.greenLight}, transparent 55%), #fff` }}>
-      <Container maxWidth="lg" sx={{ position: 'relative', py: { xs: 5, md: 10 }, display: 'grid', gap: { xs: 4, md: 6 }, gridTemplateColumns: { xs: '1fr', md: '1.1fr 0.9fr' }, alignItems: 'center' }}>
+      <Container maxWidth="lg" sx={{ position: 'relative', pt: { xs: 5, md: 10 }, pb: { xs: 8, md: 14 }, display: 'grid', gap: { xs: 4, md: 6 }, gridTemplateColumns: { xs: '1fr', md: '1.1fr 0.9fr' }, alignItems: 'center' }}>
         <Box sx={{ position: 'relative', zIndex: 1 }}>
           {eyebrow && (
             <motion.div initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }}>
@@ -71,10 +71,10 @@ export default function Hero({ eyebrow, heading, subheading, ctaLabel = 'Browse 
           </motion.div>
           {stats.length > 0 && (
             <motion.div initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.7 }}>
-              <Box sx={{ mt: { xs: 4, md: 6 }, display: 'flex', gap: { xs: 3, md: 5 }, flexWrap: 'wrap' }}>
+              <Box sx={{ mt: { xs: 4, md: 6 }, display: 'flex', gap: { xs: 1.5, md: 2 }, flexWrap: 'wrap' }}>
                 {stats.map((s) => (
-                  <Box key={s.label}>
-                    <Typography sx={{ fontFamily: 'var(--font-display)', fontSize: '1.9rem', fontWeight: 600, color: 'primary.main', lineHeight: 1 }}>{s.value}</Typography>
+                  <Box key={s.label} sx={{ px: 2.5, py: 1.5, borderRadius: 4, bgcolor: 'rgba(255,255,255,.75)', backdropFilter: 'blur(8px)', border: `1px solid ${brand.line}`, boxShadow: '0 4px 16px rgba(16,36,63,.06)' }}>
+                    <Typography sx={{ fontFamily: 'var(--font-display)', fontSize: '1.9rem', fontWeight: 600, lineHeight: 1, background: `linear-gradient(135deg, ${brand.navy}, ${brand.sky})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{s.value}</Typography>
                     <Typography variant="caption" color="text.secondary">{s.label}</Typography>
                   </Box>
                 ))}
@@ -85,7 +85,8 @@ export default function Hero({ eyebrow, heading, subheading, ctaLabel = 'Browse 
 
         <motion.div style={{ y }} initial={reduce ? false : { opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9, delay: 0.2, ease }}>
           <Box sx={{ position: 'relative', mx: 'auto', width: '100%', maxWidth: 460, aspectRatio: '1 / 1', display: 'grid', placeItems: 'center' }}>
-            <Box sx={{ position: 'absolute', inset: '6%', borderRadius: '50%', background: `linear-gradient(145deg, ${brand.skyLight}, #fff 60%, ${brand.greenLight})`, boxShadow: '0 30px 80px rgba(43,82,144,.18)' }} />
+            <Box aria-hidden sx={{ position: 'absolute', inset: '-2%', borderRadius: '50%', border: `2px dashed ${brand.sky}66` }} />
+            <Box sx={{ position: 'absolute', inset: '6%', borderRadius: '50%', background: `linear-gradient(145deg, ${brand.skyLight}, #fff 60%, ${brand.greenLight})`, boxShadow: '0 30px 80px rgba(43,82,144,.22), inset 0 0 0 8px rgba(255,255,255,.7)' }} />
             <motion.div aria-hidden style={{ position: 'absolute', top: '4%', left: '2%' }} animate={reduce ? undefined : { y: [0, -10, 0] }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}>
               <Hex size={74} color={brand.sky} />
             </motion.div>

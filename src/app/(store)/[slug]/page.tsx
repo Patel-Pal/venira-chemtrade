@@ -10,7 +10,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RichText from '@/components/common/RichText';
 import { Reveal } from '@/components/animations/Reveal';
 import { getPublishedPage } from '@/modules/content/page.service';
-import { brand } from '@/theme/tokens';
+import { brand, shadows } from '@/theme/tokens';
 
 export const dynamic = 'force-dynamic';
 // Pages that have dedicated routes must not be shadowed by this dynamic segment.
@@ -35,15 +35,24 @@ export default async function ContentPage({ params }: { params: Promise<{ slug: 
     <Container maxWidth="md" sx={{ py: { xs: 3, md: 7 } }}>
       {faqJson && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJson).replace(/</g, '\\u003c') }} />}
       <Reveal>
-        <Typography variant="overline" color="info.main">{page.kind === 'policy' ? 'Policy' : 'Venira Chemtrade'}</Typography>
-        <Typography variant="h1" component="h1" sx={{ fontSize: { xs: '2rem', md: '3rem' }, mb: 3 }}>{page.title}</Typography>
+        <Box sx={{ position: 'relative', overflow: 'hidden', mb: 4, p: { xs: 3, md: 5 }, borderRadius: 6, border: `1px solid ${brand.line}`, boxShadow: shadows.soft, background: `radial-gradient(600px 260px at 100% 0%, ${brand.skyLight}, transparent 70%), radial-gradient(500px 260px at 0% 100%, ${brand.greenLight}, transparent 70%), #fff` }}>
+          <Box aria-hidden component="svg" viewBox="0 0 100 100" sx={{ position: 'absolute', right: -20, top: -30, width: 220, height: 220, opacity: 0.1, color: brand.navy }}>
+            <polygon points="50,4 91,27 91,73 50,96 9,73 9,27" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" />
+            <polygon points="50,24 74,38 74,66 50,80 26,66 26,38" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" />
+          </Box>
+          <Typography variant="overline" color="info.main" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+            <Box component="span" aria-hidden sx={{ width: 24, height: 3, borderRadius: 2, background: `linear-gradient(90deg, ${brand.sky}, ${brand.green})` }} />
+            {page.kind === 'policy' ? 'Policy' : 'Venira Chemtrade'}
+          </Typography>
+          <Typography variant="h1" component="h1" sx={{ fontSize: { xs: '2rem', md: '3rem' }, color: 'primary.dark', position: 'relative' }}>{page.title}</Typography>
+        </Box>
       </Reveal>
       {page.content && <RichText text={page.content} />}
       {page.kind === 'faq' && (
         page.faqs.length === 0 ? <Typography color="text.secondary">Frequently asked questions will be published here soon.</Typography> : (
           <Box sx={{ mt: 2 }}>
             {page.faqs.map((f, i) => (
-              <Accordion key={i} disableGutters elevation={0} sx={{ border: `1px solid ${brand.line}`, mb: 1.5, borderRadius: '16px !important', '&::before': { display: 'none' } }}>
+              <Accordion key={i} disableGutters elevation={0} sx={{ border: `1px solid ${brand.line}`, mb: 1.5, borderRadius: '16px !important', boxShadow: shadows.soft, transition: 'border-color .2s', '&:hover, &.Mui-expanded': { borderColor: `${brand.sky}99` }, '&.Mui-expanded': { bgcolor: `${brand.skyLight}44` }, '&::before': { display: 'none' } }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}><Typography sx={{ fontWeight: 700 }}>{f.question}</Typography></AccordionSummary>
                 <AccordionDetails><Typography color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>{f.answer}</Typography></AccordionDetails>
               </Accordion>

@@ -17,3 +17,6 @@ test-results
 
 # private supplier/business source files (catalogue PDF)
 source/
+
+# temporary screenshots / scratch files
+.tmp-*

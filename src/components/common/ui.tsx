@@ -19,14 +19,19 @@ export function Price({ minPaise, maxPaise, comparePaise, onRequest, size = 'md'
   if (onRequest || minPaise === null) {
     return <Chip size="small" label="Price on request" sx={{ bgcolor: brand.skyLight, color: brand.navy, fontWeight: 700 }} />;
   }
+  const hasDiscount = Boolean(comparePaise && comparePaise > minPaise);
+  const pct = hasDiscount ? Math.round((1 - minPaise / comparePaise!) * 100) : 0;
   return (
-    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, flexWrap: 'wrap' }}>
+    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: size === 'sm' ? 0.75 : 1.25, flexWrap: 'wrap' }}>
       <Typography sx={{ fontWeight: 800, fontSize: fs, color: 'text.primary' }}>
         {maxPaise && maxPaise !== minPaise ? `${formatPaise(minPaise)} - ${formatPaise(maxPaise)}` : formatPaise(minPaise)}
       </Typography>
-      {comparePaise && comparePaise > minPaise ? (
-        <Typography sx={{ textDecoration: 'line-through', color: 'text.secondary', fontSize: '0.85rem' }}>{formatPaise(comparePaise)}</Typography>
-      ) : null}
+      {hasDiscount && (
+        <>
+          <Typography component="span" aria-label={`MRP ${formatPaise(comparePaise!)}`} sx={{ textDecoration: 'line-through', color: 'text.secondary', fontSize: size === 'lg' ? '1.05rem' : '0.85rem' }}>{formatPaise(comparePaise!)}</Typography>
+          {pct > 0 && <Typography component="span" sx={{ color: '#1E8E3E', fontWeight: 800, fontSize: size === 'lg' ? '1.05rem' : '0.82rem' }}>{pct}% off</Typography>}
+        </>
+      )}
     </Box>
   );
 }
@@ -60,8 +65,13 @@ export function SectionHeader({ eyebrow, title, subtitle, action }: { eyebrow?: 
   return (
     <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 2, mb: { xs: 2.5, md: 4 } }}>
       <Box sx={{ minWidth: 0 }}>
-        {eyebrow && <Typography variant="overline" sx={{ color: 'info.main', display: 'block' }}>{eyebrow}</Typography>}
-        <Typography variant="h2" component="h2" sx={{ fontSize: { xs: '1.6rem', md: '2.3rem' } }}>{title}</Typography>
+        {eyebrow && (
+          <Typography variant="overline" sx={{ color: 'info.main', display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+            <Box component="span" aria-hidden sx={{ width: 24, height: 3, borderRadius: 2, background: `linear-gradient(90deg, ${brand.sky}, ${brand.green})` }} />
+            {eyebrow}
+          </Typography>
+        )}
+        <Typography variant="h2" component="h2" sx={{ fontSize: { xs: '1.6rem', md: '2.3rem' }, color: 'primary.dark' }}>{title}</Typography>
         {subtitle && <Typography variant="subtitle1" sx={{ mt: 0.75, maxWidth: 640 }}>{subtitle}</Typography>}
       </Box>
       {action && (
@@ -69,6 +79,18 @@ export function SectionHeader({ eyebrow, title, subtitle, action }: { eyebrow?: 
           {action.label} →
         </Button>
       )}
+    </Box>
+  );
+}
+
+export function PageTitle({ title, subtitle, icon }: { title: string; subtitle?: string; icon?: ReactNode }) {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: { xs: 3, md: 4 }, p: { xs: 2, md: 3 }, borderRadius: 5, border: `1px solid ${brand.line}`, background: `radial-gradient(500px 200px at 100% 0%, ${brand.skyLight}, transparent 70%), radial-gradient(400px 200px at 0% 100%, ${brand.greenLight}, transparent 70%), #fff` }}>
+      {icon && <Box aria-hidden sx={{ flexShrink: 0, width: 52, height: 52, borderRadius: 3.5, display: 'grid', placeItems: 'center', color: '#fff', background: `linear-gradient(135deg, ${brand.navy}, ${brand.sky})`, boxShadow: '0 6px 16px rgba(43,82,144,.28)' }}>{icon}</Box>}
+      <Box sx={{ minWidth: 0 }}>
+        <Typography variant="h2" component="h1" sx={{ fontSize: { xs: '1.6rem', md: '2.2rem' }, color: 'primary.dark' }}>{title}</Typography>
+        {subtitle && <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>{subtitle}</Typography>}
+      </Box>
     </Box>
   );
 }

@@ -8,6 +8,7 @@ import Rating from '@mui/material/Rating';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
 import Hero from '@/components/home/Hero';
+import { TrustStrip, HowItWorks, QuoteCta } from '@/components/home/HomeSections';
 import ProductRail from '@/components/products/ProductRail';
 import { Reveal, Stagger, StaggerItem } from '@/components/animations/Reveal';
 import { SectionHeader } from '@/components/common/ui';
@@ -50,6 +51,8 @@ export default async function HomePage() {
         stats={stats}
       />
 
+      <TrustStrip />
+
       {topCats.length > 0 && (
         <Container maxWidth="lg" sx={{ mt: { xs: 6, md: 10 } }}>
           <Reveal>
@@ -59,13 +62,18 @@ export default async function HomePage() {
             <Box sx={{ display: 'grid', gap: { xs: 1.5, md: 2.5 }, gridTemplateColumns: { xs: 'repeat(2, minmax(0,1fr))', sm: 'repeat(3, minmax(0,1fr))', md: 'repeat(4, minmax(0,1fr))' } }}>
               {topCats.slice(0, 8).map((c, i) => (
                 <StaggerItem key={c.id}>
-                  <Box component={Link} href={`/products?category=${c.slug}`} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden', minHeight: { xs: 150, md: 200 }, p: { xs: 2, md: 3 }, borderRadius: 6, textDecoration: 'none', color: c.image?.url || i % 3 === 0 ? '#fff' : 'text.primary', background: i % 3 === 0 ? `linear-gradient(135deg, ${brand.navy}, ${brand.navyDark})` : i % 3 === 1 ? brand.skyLight : brand.greenLight, border: `1px solid ${brand.line}`, boxShadow: shadows.soft, transition: 'transform .25s, box-shadow .25s', '&:hover': { transform: 'translateY(-4px)', boxShadow: shadows.lift } }}>
+                  <Box component={Link} href={`/products?category=${c.slug}`} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden', minHeight: { xs: 150, md: 200 }, p: { xs: 2, md: 3 }, borderRadius: 6, textDecoration: 'none', color: c.image?.url || i % 3 === 0 ? '#fff' : 'text.primary', background: i % 3 === 0 ? `linear-gradient(135deg, ${brand.navy}, ${brand.navyDark})` : i % 3 === 1 ? brand.skyLight : brand.greenLight, border: `1px solid ${brand.line}`, boxShadow: shadows.soft, transition: 'transform .25s, box-shadow .25s', '& .cat-hex': { transition: 'transform .5s ease' }, '& .cat-arrow': { opacity: 0, transform: 'translateX(-6px)', transition: 'all .25s' }, '&:hover': { transform: 'translateY(-6px)', boxShadow: shadows.lift, '& .cat-hex': { transform: 'scale(1.15) rotate(12deg)' }, '& .cat-arrow': { opacity: 1, transform: 'none' } } }}>
                     {c.image?.url && (<><Image src={optimizedImage(c.image.url, 700) ?? c.image.url} alt="" fill sizes="(max-width:600px) 50vw, 300px" style={{ objectFit: 'cover' }} /><Box aria-hidden sx={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg, rgba(16,36,63,.15) 0%, rgba(16,36,63,.82) 100%)` }} /></>)}
-                    <Box aria-hidden component="svg" viewBox="0 0 100 100" sx={{ position: 'absolute', right: -18, bottom: -18, width: { xs: 96, md: 140 }, height: { xs: 96, md: 140 }, opacity: 0.18 }}><polygon points="50,4 91,27 91,73 50,96 9,73 9,27" fill="none" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" /><polygon points="50,28 71,40 71,64 50,76 29,64 29,40" fill="none" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" /></Box>
-                    <ScienceOutlinedIcon sx={{ opacity: 0.9, position: 'relative', zIndex: 1 }} />
-                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                    <Box className="cat-hex" aria-hidden component="svg" viewBox="0 0 100 100" sx={{ position: 'absolute', right: -18, bottom: -18, width: { xs: 96, md: 140 }, height: { xs: 96, md: 140 }, opacity: 0.18 }}><polygon points="50,4 91,27 91,73 50,96 9,73 9,27" fill="none" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" /><polygon points="50,28 71,40 71,64 50,76 29,64 29,40" fill="none" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" /></Box>
+                    <Box sx={{ position: 'relative', width: 44, height: 44, borderRadius: 3, display: 'grid', placeItems: 'center', bgcolor: i % 3 === 0 ? 'rgba(255,255,255,.16)' : 'rgba(255,255,255,.85)', color: i % 3 === 0 ? '#fff' : i % 3 === 1 ? brand.navy : brand.greenDark }}>
+                      <ScienceOutlinedIcon />
+                    </Box>
+                    <Box sx={{ position: 'relative' }}>
                       <Typography sx={{ fontWeight: 700, fontSize: { xs: '0.98rem', md: '1.1rem' }, lineHeight: 1.25 }}>{c.name}</Typography>
-                      <Typography variant="caption" sx={{ opacity: 0.8 }}>{c.productCount} items</Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 0.25 }}>
+                        <Typography variant="caption" sx={{ opacity: 0.8 }}>{c.productCount} items</Typography>
+                        <ArrowForwardIcon className="cat-arrow" fontSize="small" />
+                      </Box>
                     </Box>
                   </Box>
                 </StaggerItem>
@@ -124,6 +132,8 @@ export default async function HomePage() {
         </Container>
       )}
 
+      <HowItWorks />
+
       <Container maxWidth="lg" sx={{ mt: { xs: 6, md: 10 } }}>
         <Reveal>
           <Box sx={{ display: 'grid', gap: { xs: 3, md: 6 }, gridTemplateColumns: { xs: '1fr', md: '0.8fr 1.2fr' }, alignItems: 'center', bgcolor: '#fff', border: `1px solid ${brand.line}`, borderRadius: 7, p: { xs: 3, md: 6 }, boxShadow: shadows.soft }}>
@@ -164,6 +174,8 @@ export default async function HomePage() {
           </Stagger>
         </Container>
       )}
+
+      <QuoteCta />
 
       {settings.featureFlags.newsletter !== false && (
         <Container maxWidth="md" sx={{ mt: { xs: 6, md: 10 } }}>
