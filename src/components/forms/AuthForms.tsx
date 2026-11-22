@@ -19,6 +19,7 @@ import { forgotSchema, loginSchema, registerSchema, resetSchema } from '@/schema
 import { post, fieldErrors } from '@/lib/api-client';
 import { qk } from '@/lib/query-keys';
 import { safeNext } from '@/utils/url';
+import { STAFF_ROLE_KEYS } from '@/constants/permissions';
 
 function PasswordField({ label = 'Password', error, helper, autoComplete, reg }: { label?: string; error?: boolean; helper?: string; autoComplete: string; reg: object }) {
   const [show, setShow] = useState(false);
@@ -52,14 +53,18 @@ function useSubmit(setError: (k: never, v: { message: string }) => void) {
 export function LoginForm() {
   const router = useRouter();
   const qc = useQueryClient();
-  const next = safeNext(useSearchParams().get('next'), '/account');
+  const nextParam = useSearchParams().get('next');
+  const next = safeNext(nextParam, '/account');
   const { register, handleSubmit, setError, formState: { errors } } = useForm<z.infer<typeof loginSchema>>({ resolver: zodResolver(loginSchema) });
   const { formError, busy, run } = useSubmit(setError as never);
   return (
     <Box component="form" noValidate onSubmit={handleSubmit((v) => run(async () => {
-      await post('/api/auth/login', v);
+      const res = await post<{ user: { roleKey: string } }>('/api/auth/login', v);
       await qc.invalidateQueries({ queryKey: qk.me });
-      router.replace(next);
+      // Staff land on their dashboard unless they were sent here from a specific page.
+      const role = res?.user?.roleKey ?? '';
+      const home = role === 'super_admin' ? '/super-admin' : STAFF_ROLE_KEYS.includes(role) ? '/admin' : null;
+      router.replace(nextParam && safeNext(nextParam, '') ? next : home ?? next);
       router.refresh();
     }))} sx={{ display: 'grid', gap: 2 }}>
       {formError && <Alert severity="error">{formError}</Alert>}
